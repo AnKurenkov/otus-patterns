@@ -1,6 +1,8 @@
-from quadratic_equation import QuadraticEquation
 import math
+
 import pytest
+
+from quadratic_equation import QuadraticEquation
 
 
 class TestSolveQuadraticEquation:
@@ -30,14 +32,14 @@ class TestSolveQuadraticEquation:
     @staticmethod
     def test_a_is_close_zero():
         tolerance = QuadraticEquation.tolerance
-        qe = QuadraticEquation(a=tolerance/10, b=2.0, c=1.0)
+        qe = QuadraticEquation(a=tolerance / 10, b=2.0, c=1.0)
         with pytest.raises(ValueError, match=r"Коэффициент a не может быть равен 0 в квадратном уравнении."):
             qe.solve()
 
     @staticmethod
     def test_d_is_close_zero():
         tolerance = QuadraticEquation.tolerance
-        b = 2.0 + tolerance/10
+        b = 2.0 + tolerance / 10
         qe = QuadraticEquation(a=1.0, b=b, c=1.0)
         roots = qe.solve()
         assert len(roots) > 0
@@ -61,4 +63,3 @@ class TestSolveQuadraticEquation:
         qe = QuadraticEquation(a=1.0, b=2.0, c=-math.inf)
         with pytest.raises(ValueError, match=r"Коэффициент не может быть равен NaN или inf."):
             qe.solve()
-
