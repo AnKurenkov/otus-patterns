@@ -2,7 +2,7 @@ import math
 
 import pytest
 
-from quadratic_equation import QuadraticEquation
+from src.quadratic_equation import QuadraticEquation
 
 
 class TestSolveQuadraticEquation:
