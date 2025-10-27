@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=80.9", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "otus-patterns"
+version = "0.1.0"
+description = "Задания по курсу OTUS 'Архитектура и шаблоны проектирования'"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=7.0",
+    "black>=25.0",
+    "flake8>=7.0",
+    "autoflake>=2.0",
+    "isort>=7.0"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 120
+target-version = ['py311']
+
+[tool.isort]
+profile = "black"
+line_length = 120
+multi_line_output = 3
+skip_gitignore = true
+
+[tool.autoflake]
+in-place=true
+ignore-init-module-imports=true
+remove-all-unused-imports = true
+remove-unused-variables = true
