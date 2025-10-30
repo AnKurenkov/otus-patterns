@@ -55,16 +55,16 @@ class CartesianVector(VectorBase):
         return round(self._y)
 
     @property
-    def magnitude(self) -> int:
-        return round(math.hypot(self._x, self._y))
+    def magnitude(self) -> float:
+        return math.hypot(self._x, self._y)
 
     @property
-    def angle(self) -> int:
-        return round(math.atan2(self._y, self._x))
+    def angle(self) -> float:
+        return math.atan2(self._y, self._x)
 
 
 class PolarVector(VectorBase):
-    """Вектор в полярных координатах (r, theta). Координаты округляются до целых значений."""
+    """Вектор в полярных координатах (r, theta). Декартовы координаты округляются до целых значений."""
 
     def __init__(self, r: float, theta: float):
         if r < 0:
@@ -81,12 +81,12 @@ class PolarVector(VectorBase):
         return round(self._r * math.sin(self._theta))
 
     @property
-    def magnitude(self) -> int:
-        return round(self._r)
+    def magnitude(self) -> float:
+        return self._r
 
     @property
-    def angle(self) -> int:
-        return round(self._theta)
+    def angle(self) -> float:
+        return self._theta
 
 
 class Point(CartesianVector):
