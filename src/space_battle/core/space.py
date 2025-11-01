@@ -90,7 +90,22 @@ class PolarVector(VectorBase):
 
 
 class Point(CartesianVector):
+    """Точка, которую можно переместить на вектор скорости. Имеет все свойства вектора в декартовых координатах.
+    Координаты округляются до целых значений."""
+
     def move_to(self, velocity: VectorBase):
         self._x += velocity.x
         self._y += velocity.y
         return self
+
+
+class CartesianVelocity(CartesianVector):
+    """Вектор скорости в декартовых координатах. Координаты округляются до целых значений."""
+
+
+class PolarVelocity(PolarVector):
+    """Вектор скорости в полярных координатах (r, theta). Декартовы координаты округляются до целых значений."""
+
+
+class Angle:
+    pass

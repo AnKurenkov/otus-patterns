@@ -1,8 +1,10 @@
+from space_battle.core.space import Point, VectorBase
 from src.space_battle.core.base import Movable
-from src.space_battle.models.vector import Point, VectorBase
 
 
 class Spaceship(Movable):
+    """Корабль, который может: двигаться"""
+
     def __init__(self, location: Point, velocity: VectorBase):
         self._location = location
         self._velocity = velocity
