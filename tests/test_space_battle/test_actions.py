@@ -2,7 +2,8 @@ from unittest.mock import PropertyMock, patch
 
 import pytest
 
-from space_battle.core.exceptions import (
+from src.space_battle.core.base import Movable, Rotatable
+from src.space_battle.core.exceptions import (
     GetAngularVelocityError,
     GetDirectionError,
     GetLocationError,
@@ -10,7 +11,6 @@ from space_battle.core.exceptions import (
     ObjectMoveError,
     ObjectRotateError,
 )
-from src.space_battle.core.base import Movable, Rotatable
 from src.space_battle.core.space import CartesianVelocity, Direction, Point, VectorBase
 from src.space_battle.entities.actions import Move, Rotate
 
