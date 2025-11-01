@@ -10,8 +10,8 @@ from space_battle.core.exceptions import (
     ObjectMoveError,
     ObjectRotateError,
 )
-from space_battle.core.space import CartesianVelocity, Direction, Point, VectorBase
 from src.space_battle.core.base import Movable, Rotatable
+from src.space_battle.core.space import CartesianVelocity, Direction, Point, VectorBase
 from src.space_battle.entities.actions import Move, Rotate
 
 
