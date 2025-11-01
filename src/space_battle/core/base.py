@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from space_battle.core.space import Direction, Point, VectorBase
+from src.space_battle.core.space import Direction, Point, VectorBase
 
 
 class Movable(ABC):

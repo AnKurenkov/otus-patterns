@@ -1,5 +1,5 @@
-from space_battle.core.space import Direction, Point, VectorBase
 from src.space_battle.core.base import Movable, Rotatable
+from src.space_battle.core.space import Direction, Point, VectorBase
 
 
 class Spaceship(Movable, Rotatable):
