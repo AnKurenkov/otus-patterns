@@ -11,4 +11,16 @@ class GetVelocityError(SpaceBattleError):
 
 
 class ObjectMoveError(SpaceBattleError):
-    """Ошибка изменения положения объекта в пространстве."""
+    """Ошибка линейного перемещения объекта в пространстве."""
+
+
+class GetDirectionError(SpaceBattleError):
+    """Ошибка получения направления объекта в пространстве."""
+
+
+class GetAngularVelocityError(SpaceBattleError):
+    """Ошибка получения мгновенной угловой скорости объекта в пространстве."""
+
+
+class ObjectRotateError(SpaceBattleError):
+    """Ошибка поворота объекта в пространстве."""

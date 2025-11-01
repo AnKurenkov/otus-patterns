@@ -107,5 +107,37 @@ class PolarVelocity(PolarVector):
     """Вектор скорости в полярных координатах (r, theta). Декартовы координаты округляются до целых значений."""
 
 
-class Angle:
-    pass
+class Direction:
+    """Направление поворота объекта:
+    d : int - направление (0..n-1)
+    n : int - кол-во градаций направления (частей в полном повороте)
+    """
+
+    def __init__(self, d: int, n: int):
+        self._d = d % n
+        if self._d < 0:
+            self._d += n
+        self._n = n
+
+    @property
+    def d(self) -> int:
+        return self._d
+
+    @property
+    def n(self) -> int:
+        return self._n
+
+    def rotate_by(self, angular_velocity: int):
+        self._d = (self._d + angular_velocity % self._n) % self._n
+        if self._d < 0:
+            self._d += self._n
+        return self
+
+    def __eq__(self, other):
+        """Сравнивает текущее направление с другим."""
+        if not isinstance(other, Direction):
+            raise TypeError("Можно сравнивать только с другим направлением с типом Direction")
+        return self.d == other.d
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}(d: {self.d}, n: {self.n})"

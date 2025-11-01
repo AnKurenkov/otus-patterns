@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 
-from src.space_battle.models.vector import Point, VectorBase
+from space_battle.core.space import Direction, Point, VectorBase
 
 
 class Movable(ABC):
-    """Абстрактный базовый класс для движущихся объектов"""
+    """Абстрактный базовый класс для движущихся прямолинейно объектов"""
 
     @property
     @abstractmethod
@@ -25,3 +25,27 @@ class Movable(ABC):
     @abstractmethod
     def velocity(self, velocity: VectorBase):
         """Задать вектор скорости объекта"""
+
+
+class Rotatable(ABC):
+    """Абстрактный базовый класс для вращающихся объектов"""
+
+    @property
+    @abstractmethod
+    def direction(self) -> Direction:
+        """Получить направление объекта"""
+
+    @direction.setter
+    @abstractmethod
+    def direction(self, direction: Direction):
+        """Задать направление объекта"""
+
+    @property
+    @abstractmethod
+    def angular_velocity(self) -> int:
+        """Получить мгновенную угловую скорость объекта"""
+
+    @angular_velocity.setter
+    @abstractmethod
+    def angular_velocity(self, angular_velocity: int):
+        """Задать мгновенную угловую скорость объекта"""
