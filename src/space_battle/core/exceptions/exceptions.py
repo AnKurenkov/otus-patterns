@@ -1,5 +1,4 @@
-class SpaceBattleError(Exception):
-    """Базовый класс для всех исключений в проекте."""
+from src.space_battle.core.exceptions.base import SpaceBattleError
 
 
 class GetLocationError(SpaceBattleError):
