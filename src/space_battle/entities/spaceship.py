@@ -1,6 +1,8 @@
 from src.space_battle.core.base import Movable, Rotatable
 from src.space_battle.core.space import Direction, Point, VectorBase
 
+# TODO: перенести в core.objects??
+
 
 class Spaceship(Movable, Rotatable):
     """Корабль, который может: двигаться, вращаться"""

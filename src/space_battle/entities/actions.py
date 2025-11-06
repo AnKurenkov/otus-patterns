@@ -1,6 +1,8 @@
 from src.space_battle.core.actions.base import ActionBase
 from src.space_battle.core.base import Movable, Rotatable
 
+# TODO: перенести в core.actions??
+
 
 class Move(ActionBase):
     def __init__(self, m: Movable):

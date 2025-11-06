@@ -26,7 +26,7 @@ class ActionLoop(ActionLoopBase):
             try:
                 action.execute()
             except SpaceBattleError as e:
-                ExceptionHandler.handle(action, e)
+                ExceptionHandler.handle(self._queue, action, e).execute()
 
     def stop(self):
         """Остановка цикла обработки действий (команд)"""
