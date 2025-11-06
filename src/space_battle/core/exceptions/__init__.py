@@ -1,1 +1,8 @@
-from .exceptions import GetAngularVelocityError, GetDirectionError, GetLocationError, GetVelocityError
+from .exceptions import (
+    GetAngularVelocityError,
+    GetDirectionError,
+    GetLocationError,
+    GetVelocityError,
+    ObjectMoveError,
+    ObjectRotateError,
+)
