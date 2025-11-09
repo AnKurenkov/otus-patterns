@@ -49,7 +49,17 @@ class RepeatExceptionAction(ExceptionActionBase):
         self._action.execute()
 
 
-class PutRepeatExceptionInQueueAction(ExceptionActionBase):
+class SecondRepeatExceptionAction(ExceptionActionBase):
+    """Команда для второго повтора команды, вызвавшей исключение"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def execute(self):
+        self._action.execute()
+
+
+class PutRepeatExceptionActionInQueueAction(ExceptionActionBase):
     """Команда, которая ставит в очередь команду повторитель команды, вызвавшей исключение"""
 
     def __init__(self, *args, **kwargs):

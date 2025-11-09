@@ -1,5 +1,5 @@
-from ..exceptions.base import SpaceBattleError
-from ..exceptions.exception_handler import ExceptionHandler
+from src.space_battle.core.exceptions.exception_handler import ExceptionHandler
+
 from .base import ActionLoopBase, ActionQueueBase
 
 
@@ -25,7 +25,7 @@ class ActionLoop(ActionLoopBase):
             action = self._queue.get()
             try:
                 action.execute()
-            except SpaceBattleError as e:
+            except Exception as e:
                 ExceptionHandler.handle(self._queue, action, e).execute()
 
     def stop(self):
