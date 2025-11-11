@@ -15,11 +15,12 @@ HT = TypeVar("HT", bound=ExceptionActionBase)
 
 
 class ExceptionHandlerBase(ABC):
-    """Абстрактный базовый класс обработчика исключений:
+    """Абстрактный базовый класс обработчика исключений.
+    Обязательный атрибут:
     _store : dict[тип действия, dict[тип исключения, тип обработчика]]
     """
 
-    _store: dict[Type[AT], dict[Type[ET], Type[HT]]]
+    _store: dict[Type[AT], dict[Type[ET], Type[HT]]] = {}
 
     @staticmethod
     @abstractmethod

@@ -24,8 +24,13 @@ class LogExceptionAction(ExceptionActionBase):
         super().__init__(*args, **kwargs)
 
     def execute(self):
+        nesting = 1
+        while isinstance(self._action, ExceptionActionBase) and nesting <= 5:
+            self._action = self._action._action
+            nesting += 1
         logger.exception(
-            f"При выполнении действия (команды) {self._action} произошло исключение.", self._exception, exc_info=True
+            f"При выполнении действия (команды) {type(self._action)} произошло исключение: "
+            f"{type(self._exception).__name__}: {str(self._exception)}",
         )
 
 
@@ -59,7 +64,7 @@ class SecondRepeatExceptionAction(ExceptionActionBase):
         self._action.execute()
 
 
-class PutRepeatExceptionActionInQueueAction(ExceptionActionBase):
+class PutRepeatExceptionInQueueAction(ExceptionActionBase):
     """Команда, которая ставит в очередь команду повторитель команды, вызвавшей исключение"""
 
     def __init__(self, *args, **kwargs):
@@ -67,3 +72,13 @@ class PutRepeatExceptionActionInQueueAction(ExceptionActionBase):
 
     def execute(self):
         self._queue.put(RepeatExceptionAction(self._queue, self._action, self._exception))
+
+
+class PutSecondRepeatExceptionInQueueAction(ExceptionActionBase):
+    """Команда, которая ставит в очередь второй раз команду повторитель команды, вызвавшей исключение"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def execute(self):
+        self._queue.put(SecondRepeatExceptionAction(self._queue, self._action, self._exception))
