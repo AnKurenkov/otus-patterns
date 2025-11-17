@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 
 from src.space_battle.core.space import Direction, Point, VectorBase
 
+# TODO: перенести в core.objects??
+
 
 class Movable(ABC):
     """Абстрактный базовый класс для движущихся прямолинейно объектов"""
