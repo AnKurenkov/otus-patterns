@@ -23,11 +23,6 @@ class Movable(ABC):
     def velocity(self) -> VectorBase:
         """Получить вектор скорости объекта"""
 
-    @velocity.setter
-    @abstractmethod
-    def velocity(self, velocity: VectorBase):
-        """Задать вектор скорости объекта"""
-
 
 class Rotatable(ABC):
     """Абстрактный базовый класс для вращающихся объектов"""
@@ -47,7 +42,21 @@ class Rotatable(ABC):
     def angular_velocity(self) -> int:
         """Получить мгновенную угловую скорость объекта"""
 
-    @angular_velocity.setter
+
+class Fuelable(ABC):
+    """Абстрактный базовый класс для заправляемых топливом объектов"""
+
+    @property
     @abstractmethod
-    def angular_velocity(self, angular_velocity: int):
-        """Задать мгновенную угловую скорость объекта"""
+    def fuel(self) -> int:
+        """Получить объем топлива объекта"""
+
+    @fuel.setter
+    @abstractmethod
+    def fuel(self, fuel: int):
+        """Задать объем топлива объекта"""
+
+    @property
+    @abstractmethod
+    def fuel_consumption(self) -> int:
+        """Получить мгновенный расход топлива объекта"""
