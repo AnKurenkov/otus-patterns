@@ -9,25 +9,8 @@ from src.space_battle.core.exceptions import (
     GetVelocityError,
     ObjectMoveError,
 )
-from src.space_battle.core.space import CartesianVelocity, Point, VectorBase
-
-
-class MovableStub(Movable):
-    def __init__(self, location: Point, velocity: VectorBase):
-        self._location = location
-        self._velocity = velocity
-
-    @property
-    def location(self) -> Point:
-        return self._location
-
-    @location.setter
-    def location(self, location: Point):
-        self._location = location
-
-    @property
-    def velocity(self) -> VectorBase:
-        return self._velocity
+from src.space_battle.core.space import CartesianVelocity, Point
+from tests.test_space_battle.core import MovableStub
 
 
 class TestMove:

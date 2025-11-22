@@ -5,6 +5,7 @@ import pytest
 from space_battle.core.actions.actions import BurnFuel, CheckFuel
 from src.space_battle.core.base import Fuelable
 from src.space_battle.core.exceptions.exceptions import NotEnoughFuelError
+from tests.test_space_battle.core import FuelableStub
 
 
 @pytest.fixture
@@ -16,24 +17,6 @@ def mock_fuelable():
         return mock
 
     return f
-
-
-class FuelableStub(Fuelable):
-    def __init__(self, fuel: int, fuel_consumption: int):
-        self._fuel = fuel
-        self._fuel_consumption = fuel_consumption
-
-    @property
-    def fuel(self) -> int:
-        return self._fuel
-
-    @fuel.setter
-    def fuel(self, fuel: int):
-        self._fuel = fuel
-
-    @property
-    def fuel_consumption(self) -> int:
-        return self._fuel_consumption
 
 
 class TestCheckFuel:
@@ -51,13 +34,13 @@ class TestCheckFuel:
 
 class TestBurnFuel:
     @staticmethod
-    def test_burn_fuel(mock_fuelable):
+    def test_burn_fuel():
         obj_ = FuelableStub(fuel=3, fuel_consumption=2)
         BurnFuel(obj_).execute()
         assert obj_.fuel == 1
 
     @staticmethod
-    def test_overburn_fuel(mock_fuelable):
+    def test_overburn_fuel():
         obj_ = FuelableStub(fuel=3, fuel_consumption=4)
         BurnFuel(obj_).execute()
         assert obj_.fuel == 0

@@ -10,24 +10,7 @@ from src.space_battle.core.exceptions import (
     ObjectRotateError,
 )
 from src.space_battle.core.space import Direction
-
-
-class RotatableStub(Rotatable):
-    def __init__(self, direction: Direction, angular_velocity: int):
-        self._direction = direction
-        self._angular_velocity = angular_velocity
-
-    @property
-    def direction(self) -> Direction:
-        return self._direction
-
-    @direction.setter
-    def direction(self, direction: Direction):
-        self._direction = direction
-
-    @property
-    def angular_velocity(self) -> int:
-        return self._angular_velocity
+from tests.test_space_battle.core import RotatableStub
 
 
 class TestRotate:
