@@ -2,6 +2,7 @@ from unittest.mock import PropertyMock, patch
 
 import pytest
 
+from space_battle.core.actions.actions import Rotate
 from src.space_battle.core.base import Rotatable
 from src.space_battle.core.exceptions import (
     GetAngularVelocityError,
@@ -9,7 +10,6 @@ from src.space_battle.core.exceptions import (
     ObjectRotateError,
 )
 from src.space_battle.core.space import Direction
-from tests.test_space_battle.core.actions.actions import Rotate
 
 
 class RotatableStub(Rotatable):

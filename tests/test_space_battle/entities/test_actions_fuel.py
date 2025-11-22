@@ -2,9 +2,9 @@ from unittest.mock import MagicMock, PropertyMock
 
 import pytest
 
+from space_battle.core.actions.actions import BurnFuel, CheckFuel
 from src.space_battle.core.base import Fuelable
 from src.space_battle.core.exceptions.exceptions import NotEnoughFuelError
-from tests.test_space_battle.core.actions.actions import BurnFuel, CheckFuel
 
 
 @pytest.fixture
