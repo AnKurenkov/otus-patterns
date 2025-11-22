@@ -9,7 +9,7 @@ from src.space_battle.core.exceptions import (
     ObjectRotateError,
 )
 from src.space_battle.core.space import Direction
-from src.space_battle.entities.actions import Rotate
+from tests.test_space_battle.core.actions.actions import Rotate
 
 
 class RotatableStub(Rotatable):

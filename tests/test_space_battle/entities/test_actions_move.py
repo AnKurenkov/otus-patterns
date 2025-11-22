@@ -9,7 +9,7 @@ from src.space_battle.core.exceptions import (
     ObjectMoveError,
 )
 from src.space_battle.core.space import CartesianVelocity, Point, VectorBase
-from src.space_battle.entities.actions import Move
+from tests.test_space_battle.core.actions.actions import Move
 
 
 class MovableStub(Movable):
