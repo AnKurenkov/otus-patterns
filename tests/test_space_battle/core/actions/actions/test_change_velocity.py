@@ -1,7 +1,7 @@
 import math
 
-from space_battle.core.actions.actions import ChangeVelocity
-from space_battle.core.objects.spaceship import Spaceship
+from src.space_battle.core.actions.actions import ChangeVelocity
+from src.space_battle.core.objects.spaceship import Spaceship
 from src.space_battle.core.space import Direction, Point, PolarVelocity
 from tests.test_space_battle.core import MovableStub, RotatableStub
 

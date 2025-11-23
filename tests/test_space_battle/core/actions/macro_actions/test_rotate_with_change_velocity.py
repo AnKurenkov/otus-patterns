@@ -1,8 +1,8 @@
 import math
 
-from space_battle.core.actions.actions import ChangeVelocity, Rotate
-from space_battle.core.actions.macro_actions import RotateWithChangeVelocity
-from space_battle.core.objects.spaceship import Spaceship
+from src.space_battle.core.actions.actions import ChangeVelocity, Rotate
+from src.space_battle.core.actions.macro_actions import RotateWithChangeVelocity
+from src.space_battle.core.objects.spaceship import Spaceship
 from src.space_battle.core.space import Direction, Point, PolarVelocity
 
 

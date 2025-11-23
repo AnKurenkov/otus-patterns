@@ -1,19 +1,5 @@
-from unittest.mock import PropertyMock, patch
-
-import pytest
-
-from space_battle.core.actions.actions import BurnFuel, CheckFuel, Move, Rotate
 from src.space_battle.core.base import Fuelable, Movable, Rotatable
-from src.space_battle.core.exceptions import (
-    GetAngularVelocityError,
-    GetDirectionError,
-    GetLocationError,
-    GetVelocityError,
-    ObjectMoveError,
-    ObjectRotateError,
-)
-from src.space_battle.core.exceptions.exceptions import NotEnoughFuelError
-from src.space_battle.core.space import CartesianVelocity, Direction, Point, PolarVelocity
+from src.space_battle.core.space import Direction, Point, PolarVelocity
 
 
 class MovableStub(Movable):

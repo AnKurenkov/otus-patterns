@@ -1,7 +1,7 @@
 import pytest
 
-from space_battle.core.actions.actions import BurnFuel, CheckFuel, Move
-from space_battle.core.actions.macro_actions import MoveWithBurnFuel
+from src.space_battle.core.actions.actions import BurnFuel, CheckFuel, Move
+from src.space_battle.core.actions.macro_actions import MoveWithBurnFuel
 from src.space_battle.core.exceptions.exceptions import NotEnoughFuelError
 from src.space_battle.core.space import CartesianVelocity, Point, PolarVelocity
 from tests.test_space_battle.core import FuelableStub, MovableStub
