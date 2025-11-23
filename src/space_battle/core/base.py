@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.space_battle.core.space import Direction, Point, VectorBase
-
-# TODO: перенести в core.objects??
+from src.space_battle.core.space import Direction, Point, PolarVelocity
 
 
 class Movable(ABC):
@@ -20,7 +18,7 @@ class Movable(ABC):
 
     @property
     @abstractmethod
-    def velocity(self) -> VectorBase:
+    def velocity(self) -> PolarVelocity:
         """Получить вектор скорости объекта"""
 
 

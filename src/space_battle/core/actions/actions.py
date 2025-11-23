@@ -2,8 +2,6 @@ from src.space_battle.core.actions.base import ActionBase
 from src.space_battle.core.base import Fuelable, Movable, Rotatable
 from src.space_battle.core.exceptions.exceptions import NotEnoughFuelError
 
-# TODO: перенести в core.actions??
-
 
 class Move(ActionBase):
     def __init__(self, m: Movable):
@@ -39,3 +37,12 @@ class BurnFuel(ActionBase):
 
     def execute(self):
         self._f.fuel = max(self._f.fuel - self._f.fuel_consumption, 0)
+
+
+class ChangeVelocity(ActionBase):
+    def __init__(self, mr: Movable | Rotatable):
+        self._mr = mr
+
+    def execute(self):
+        if isinstance(self._mr, Movable) and isinstance(self._mr, Rotatable):
+            self._mr.velocity.set_angle_by_direction(self._mr.direction)

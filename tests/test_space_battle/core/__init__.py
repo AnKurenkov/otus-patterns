@@ -13,11 +13,11 @@ from src.space_battle.core.exceptions import (
     ObjectRotateError,
 )
 from src.space_battle.core.exceptions.exceptions import NotEnoughFuelError
-from src.space_battle.core.space import CartesianVelocity, Direction, Point, VectorBase
+from src.space_battle.core.space import CartesianVelocity, Direction, Point, PolarVelocity
 
 
 class MovableStub(Movable):
-    def __init__(self, location: Point, velocity: VectorBase):
+    def __init__(self, location: Point, velocity: PolarVelocity):
         self._location = location
         self._velocity = velocity
 
@@ -30,7 +30,7 @@ class MovableStub(Movable):
         self._location = location
 
     @property
-    def velocity(self) -> VectorBase:
+    def velocity(self) -> PolarVelocity:
         return self._velocity
 
 
