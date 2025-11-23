@@ -2,7 +2,7 @@ from unittest.mock import PropertyMock, patch
 
 import pytest
 
-from space_battle.core.actions.actions import Rotate
+from src.space_battle.core.actions.actions import Rotate
 from src.space_battle.core.base import Rotatable
 from src.space_battle.core.exceptions import (
     GetAngularVelocityError,
