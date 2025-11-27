@@ -23,3 +23,7 @@ class GetAngularVelocityError(SpaceBattleError):
 
 class ObjectRotateError(SpaceBattleError):
     """Ошибка поворота объекта в пространстве."""
+
+
+class NotEnoughFuelError(SpaceBattleError):
+    """Ошибка наличия топлива у объекта."""

@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.space_battle.core.space import Direction, Point, VectorBase
-
-# TODO: перенести в core.objects??
+from src.space_battle.core.space import Direction, Point, PolarVelocity
 
 
 class Movable(ABC):
@@ -20,13 +18,8 @@ class Movable(ABC):
 
     @property
     @abstractmethod
-    def velocity(self) -> VectorBase:
+    def velocity(self) -> PolarVelocity:
         """Получить вектор скорости объекта"""
-
-    @velocity.setter
-    @abstractmethod
-    def velocity(self, velocity: VectorBase):
-        """Задать вектор скорости объекта"""
 
 
 class Rotatable(ABC):
@@ -47,7 +40,21 @@ class Rotatable(ABC):
     def angular_velocity(self) -> int:
         """Получить мгновенную угловую скорость объекта"""
 
-    @angular_velocity.setter
+
+class Fuelable(ABC):
+    """Абстрактный базовый класс для заправляемых топливом объектов"""
+
+    @property
     @abstractmethod
-    def angular_velocity(self, angular_velocity: int):
-        """Задать мгновенную угловую скорость объекта"""
+    def fuel(self) -> int:
+        """Получить объем топлива объекта"""
+
+    @fuel.setter
+    @abstractmethod
+    def fuel(self, fuel: int):
+        """Задать объем топлива объекта"""
+
+    @property
+    @abstractmethod
+    def fuel_consumption(self) -> int:
+        """Получить мгновенный расход топлива объекта"""

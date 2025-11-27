@@ -99,14 +99,6 @@ class Point(CartesianVector):
         return self
 
 
-class CartesianVelocity(CartesianVector):
-    """Вектор скорости в декартовых координатах. Координаты округляются до целых значений."""
-
-
-class PolarVelocity(PolarVector):
-    """Вектор скорости в полярных координатах (r, theta). Декартовы координаты округляются до целых значений."""
-
-
 class Direction:
     """Направление поворота объекта:
     d : int - направление (0..n-1)
@@ -141,3 +133,14 @@ class Direction:
 
     def __repr__(self):
         return f"{self.__class__.__name__}(d: {self.d}, n: {self.n})"
+
+
+class CartesianVelocity(CartesianVector):
+    """Вектор скорости в декартовых координатах. Координаты округляются до целых значений."""
+
+
+class PolarVelocity(PolarVector):
+    """Вектор скорости в полярных координатах (r, theta). Декартовы координаты округляются до целых значений."""
+
+    def set_angle_by_direction(self, d: Direction):
+        self._theta = d.d / (d.n + 1) * 2 * math.pi
