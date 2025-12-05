@@ -1,5 +1,5 @@
 import threading
-from typing import Any, Callable, Dict
+from typing import Any, Callable, cast
 
 from src.space_battle.core.actions.base import ActionBase
 from src.space_battle.core.ioc import Ioc
@@ -12,8 +12,9 @@ from .set_current_scope_action import SetCurrentScopeAction
 
 class InitAction(ActionBase):
     current_scopes = threading.local()
+    current_scopes.value = None
     _root_scope_lock = threading.Lock()
-    _root_scope: Dict[str, Callable[[list], Any]] = {}
+    _root_scope: dict[str, Callable[[list], Any]] = {}
     _already_executes_successfully = False
 
     @staticmethod
@@ -22,7 +23,7 @@ class InitAction(ActionBase):
 
     @staticmethod
     def _creating_scope(*args):
-        creating_scope = Ioc.resolve("IoC.Scope.Create.Empty", Dict[str, Callable[[list], Any]])
+        creating_scope = Ioc.resolve("IoC.Scope.Create.Empty", dict[str, Callable[[list], Any]])
         if len(args) > 0:
             parent_scope = args[0]
         else:
@@ -33,13 +34,13 @@ class InitAction(ActionBase):
     @staticmethod
     def _dependency_resolver_resolve(dependency: str, *args):
         scope = (
-            InitAction.current_scopes.value if InitAction.current_scopes.value is not None else InitAction.root_scope
+            InitAction.current_scopes.value if InitAction.current_scopes.value is not None else InitAction._root_scope
         )
         dependency_resolver = DependencyResolver(scope)
-        return dependency_resolver.resolve(dependency, args)
+        return dependency_resolver.resolve(dependency, *args)
 
     @property
-    def root_scope(self) -> Dict[str, Callable[[list], Any]]:
+    def root_scope(self) -> dict[str, Callable[[list], Any]]:
         return self._root_scope
 
     @classmethod
@@ -66,22 +67,23 @@ class InitAction(ActionBase):
         )
 
         InitAction.set_root_scope_item(
-            "IoC.Scope.Current.Parent",
+            "IoC.Scope.Parent",
             lambda *args: InitAction._raise_exception("The root scope has no a parent scope."),
         )
 
-        InitAction.set_root_scope_item("IoC.Scope.Current.Empty", lambda *args: Dict[str, Callable[[list], Any]]())
+        InitAction.set_root_scope_item("IoC.Scope.Create.Empty", lambda *args: dict[str, Callable[[list], Any]]())
 
-        InitAction.set_root_scope_item("IoC.Scope.Current.Create", lambda *args: InitAction._creating_scope(args))
+        InitAction.set_root_scope_item("IoC.Scope.Create", lambda *args: InitAction._creating_scope(*args))
 
         InitAction.set_root_scope_item(
-            "IoC.Register", lambda *args: RegisterDependencyAction(str(args[0]), Callable[[list[Any]], Any](args[1]))
+            "IoC.Register",
+            lambda *args: RegisterDependencyAction(str(args[0]), cast(Callable[[list[Any]], Any], args[1])),
         )
 
         Ioc.resolve(
             "Update Ioc Resolve Dependency Strategy",
             ActionBase,
-            lambda old_strategy: lambda dependency, *args: InitAction._dependency_resolver_resolve(dependency, args),
+            lambda old_strategy: lambda dependency, *args: InitAction._dependency_resolver_resolve(dependency, *args),
         ).execute()
 
         self._already_executes_successfully = True

@@ -1,4 +1,4 @@
-from typing import Any, Callable, TypeVar, cast
+from typing import Any, Callable, TypeVar, cast, get_origin
 
 from src.space_battle.core.actions.base import ActionBase
 
@@ -11,7 +11,7 @@ class Ioc:
     """
 
     strategy: Callable[[str, list[Any]], Any] = staticmethod(
-        lambda dependency, args: (
+        lambda dependency, *args: (
             UpdateIocResolveDependencyStrategyAction(
                 args[0]  # Callable[[Callable[[str, list[Any]], Any]], Callable[[str, list[Any]], Any]]
             )
@@ -42,9 +42,17 @@ class Ioc:
         Если полученный объект невозможно привести в запрашиваемому типу или указана несуществующая зависимость,
         то выбрасывается исключение.
         """
-        obj = Ioc.strategy(dependency, args)
-        if not isinstance(obj, expected_type):
-            raise TypeError(f"Resolved object for '{dependency}' is of type {type(obj)}, but expected {expected_type}")
+        obj = Ioc.strategy(dependency, *args)
+        if expected_type is not None and expected_type is not Any:
+            origin = get_origin(expected_type)
+            if origin is None:
+                if not isinstance(obj, expected_type):
+                    raise TypeError(
+                        f"Resolved object for '{dependency}' is of type {type(obj)}, but expected {expected_type}"
+                    )
+            else:
+                if not isinstance(obj, origin):
+                    raise TypeError(f"Resolved object for '{dependency}' is of type {type(obj)}, but expected {origin}")
         return cast(T, obj)
 
 

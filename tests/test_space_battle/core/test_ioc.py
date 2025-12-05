@@ -9,7 +9,7 @@ class TestIoc:
     def test_ioc_should_update_resolve_dependency_strategy():
         was_called: bool = False
 
-        def dependency(args):
+        def dependency(*args):
             nonlocal was_called
             was_called = True
             return args
@@ -26,4 +26,4 @@ class TestIoc:
     @staticmethod
     def test_ioc_should_throw_invalid_cast_exception_if_dependency_resolves_another_type():
         with pytest.raises(TypeError):
-            Ioc.resolve("Update Ioc Resolve Dependency Strategy", str, lambda args: args)
+            Ioc.resolve("Update Ioc Resolve Dependency Strategy", str, lambda *args: args)
