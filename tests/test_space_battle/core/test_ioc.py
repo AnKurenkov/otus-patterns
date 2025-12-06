@@ -14,14 +14,16 @@ class TestIoc:
             was_called = True
             return args
 
+        default_strategy = Ioc.strategy
         Ioc.resolve("Update Ioc Resolve Dependency Strategy", ActionBase, dependency).execute()
+        Ioc.strategy = default_strategy
 
         assert was_called
 
     @staticmethod
     def test_ioc_should_throw_value_error_exception_if_dependency_is_not_found():
         with pytest.raises(ValueError):
-            Ioc.resolve("UnexistingDependency", ActionBase)
+            Ioc.resolve("UnexistingDependency", ActionBase).execute()
 
     @staticmethod
     def test_ioc_should_throw_invalid_cast_exception_if_dependency_resolves_another_type():
