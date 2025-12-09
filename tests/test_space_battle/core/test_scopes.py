@@ -9,8 +9,8 @@ from src.space_battle.core.scopes.init_action import InitAction
 
 
 class TestScopes:
-    @pytest.fixture(scope="class", autouse=True)
-    def class_setup(self):
+    @pytest.fixture(scope="function", autouse=True)
+    def test_setup(self):
         InitAction().execute()
         ioc_scope = Ioc.resolve("IoC.Scope.Create", Any)
         Ioc.resolve("IoC.Scope.Current.Set", ActionBase, ioc_scope).execute()

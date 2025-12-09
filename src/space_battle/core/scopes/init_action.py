@@ -54,7 +54,7 @@ class InitAction(ActionBase):
             cls._root_scope[key] = scope
 
     def execute(self):
-        if self._already_executes_successfully:
+        if InitAction._already_executes_successfully:
             return
 
         InitAction.set_root_scope_item("IoC.Scope.Current.Set", lambda *args: SetCurrentScopeAction(args[0]))
@@ -86,4 +86,4 @@ class InitAction(ActionBase):
             lambda old_strategy: lambda dependency, *args: InitAction._dependency_resolver_resolve(dependency, *args),
         ).execute()
 
-        self._already_executes_successfully = True
+        InitAction._already_executes_successfully = True
