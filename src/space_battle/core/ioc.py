@@ -1,4 +1,4 @@
-from typing import Any, Callable, TypeVar, cast, get_origin
+from typing import Any, Callable, Type, TypeVar, cast, get_origin
 
 from src.space_battle.core.actions.base import ActionBase
 
@@ -25,7 +25,7 @@ class Ioc:
         raise ValueError(f"Dependency '{dependency}' is not found.")
 
     @staticmethod
-    def resolve(dependency: str, expected_type: type[T], *args: Any) -> T:
+    def resolve(dependency: str, expected_type: Type[T], *args: Any) -> T:
         """
         Разрешение зависимости по имени.
         :param dependency: Строковое имя зависимости. В реализации контейнера
