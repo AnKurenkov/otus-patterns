@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from src.space_battle.core.actions.base import ActionBase, ActionQueueBase
+from src.space_battle.core.actions.base import ActionBase, ActionsQueueBase
 from src.space_battle.core.actions.exception_action import (
     LogExceptionAction,
     PutLogExceptionInQueueAction,
@@ -13,7 +13,7 @@ from src.space_battle.core.exceptions.base import SpaceBattleError
 
 @pytest.fixture
 def mock_queue():
-    return Mock(spec=ActionQueueBase)
+    return Mock(spec=ActionsQueueBase)
 
 
 @pytest.fixture

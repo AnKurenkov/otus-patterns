@@ -9,32 +9,22 @@ class ActionBase(ABC):
         """Выполнить действие (команду) над игровым объектом"""
 
 
-class ActionQueueBase(ABC):
+class ActionsQueueBase(ABC):
     """Абстрактный базовый класс очереди действий (команд)"""
 
     @abstractmethod
-    def put(self, action: ActionBase) -> bool:
+    def put(self, action: ActionBase, *args, **kwargs):
         """Добавить действие (команду) в очередь"""
 
     @abstractmethod
-    def get(self) -> ActionBase:
+    def get(self, *args, **kwargs) -> ActionBase:
         """Получить действие (команду) из очереди"""
 
 
-class ActionLoopBase(ABC):
+class ActionsLoopBase(ABC):
     """Абстрактный базовый класс цикла обработки очереди действий (команд)"""
 
-    _queue: ActionQueueBase
-
-    @property
-    @abstractmethod
-    def queue(self) -> ActionQueueBase:
-        """Получить очередь действий (команд)"""
-
-    @queue.setter
-    @abstractmethod
-    def queue(self, queue: ActionQueueBase):
-        """Задать очередь действий (команд)"""
+    _queue: ActionsQueueBase
 
     @abstractmethod
     def run(self):

@@ -1,6 +1,6 @@
 import logging
 
-from src.space_battle.core.actions.base import ActionBase, ActionQueueBase
+from src.space_battle.core.actions.base import ActionBase, ActionsQueueBase
 
 logger = logging.getLogger(__name__)
 
@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 class ExceptionActionBase(ActionBase):
     """Базовый класс для действий (команд) - обработчиков исключений"""
 
-    def __init__(self, queue: ActionQueueBase, action: ActionBase, exception: Exception):
+    def __init__(self, queue: ActionsQueueBase, action: ActionBase, exception: Exception):
         self._queue = queue
         self._action = action
         self._exception = exception

@@ -1,6 +1,6 @@
 from typing import Type
 
-from src.space_battle.core.actions.base import ActionBase, ActionQueueBase
+from src.space_battle.core.actions.base import ActionBase, ActionsQueueBase
 from src.space_battle.core.actions.exception_action import ExceptionActionBase, LogExceptionAction
 
 from .base import AT, ET, HT, ExceptionHandlerBase
@@ -10,7 +10,7 @@ class ExceptionHandler(ExceptionHandlerBase):
     default_exception_action: ExceptionActionBase = LogExceptionAction
 
     @staticmethod
-    def handle(queue: ActionQueueBase, action: ActionBase, exception: Exception) -> ExceptionActionBase:
+    def handle(queue: ActionsQueueBase, action: ActionBase, exception: Exception) -> ExceptionActionBase:
         action_type = type(action)
         exception_type = type(exception)
         return ExceptionHandler._store.get(action_type, {}).get(
