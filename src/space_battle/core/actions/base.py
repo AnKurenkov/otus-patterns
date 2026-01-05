@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from queue import Queue
+from typing import Callable
 
 
 class ActionBase(ABC):
@@ -24,7 +26,37 @@ class ActionsQueueBase(ABC):
 class ActionsLoopBase(ABC):
     """Абстрактный базовый класс цикла обработки очереди действий (команд)"""
 
-    _queue: ActionsQueueBase
+    _queue: ActionsQueueBase | Queue
+
+    @property
+    @abstractmethod
+    def behaviour(self) -> Callable[[], None]:
+        """Получить поведение цикла обработки действий (команд)"""
+
+    @behaviour.setter
+    @abstractmethod
+    def behaviour(self, behaviour: Callable[[], None]):
+        """Задать поведение цикла обработки действий (команд)"""
+
+    @property
+    @abstractmethod
+    def before(self) -> Callable[[], None]:
+        """Получить поведение перед циклом обработки действий (команд)"""
+
+    @before.setter
+    @abstractmethod
+    def before(self, before: Callable[[], None]):
+        """Задать поведение перед циклом обработки действий (команд)"""
+
+    @property
+    @abstractmethod
+    def after(self) -> Callable[[], None]:
+        """Получить поведение после цикла обработки действий (команд)"""
+
+    @after.setter
+    @abstractmethod
+    def after(self, after: Callable[[], None]):
+        """Задать поведение после цикла обработки действий (команд)"""
 
     @abstractmethod
     def run(self):
