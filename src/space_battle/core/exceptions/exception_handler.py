@@ -1,7 +1,7 @@
 from typing import Type
 
 from src.space_battle.core.actions.base import ActionBase, ActionsQueueBase
-from src.space_battle.core.actions.exception_action import ExceptionActionBase, LogExceptionAction
+from src.space_battle.core.actions.exception_actions import ExceptionActionBase, LogExceptionAction
 
 from .base import AT, ET, HT, ExceptionHandlerBase
 

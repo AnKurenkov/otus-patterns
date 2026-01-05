@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Type, TypeVar
 
 from src.space_battle.core.actions.base import ActionBase, ActionsQueueBase
-from src.space_battle.core.actions.exception_action import ExceptionActionBase
+from src.space_battle.core.actions.exception_actions import ExceptionActionBase
 
 
 class SpaceBattleError(Exception):

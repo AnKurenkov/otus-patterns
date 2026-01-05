@@ -4,7 +4,7 @@ from unittest.mock import Mock
 import pytest
 
 from src.space_battle.core.actions.base import ActionBase, ActionsQueueBase
-from src.space_battle.core.actions.exception_action import (
+from src.space_battle.core.actions.exception_actions import (
     LogExceptionAction,
     PutRepeatExceptionInQueueAction,
     PutSecondRepeatExceptionInQueueAction,
