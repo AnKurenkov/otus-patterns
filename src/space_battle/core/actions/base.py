@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from queue import Queue
+from threading import Thread
 from typing import Callable
 
 
@@ -27,6 +28,17 @@ class ActionsLoopBase(ABC):
     """Абстрактный базовый класс цикла обработки очереди действий (команд)"""
 
     _queue: ActionsQueueBase | Queue
+    _thread: Thread
+
+    @property
+    @abstractmethod
+    def queue(self) -> ActionsQueueBase | Queue:
+        """Получить очередь действий (команд)"""
+
+    @property
+    @abstractmethod
+    def is_in_thread(self) -> bool:
+        """Проверить нахождение в текущем потоке"""
 
     @property
     @abstractmethod

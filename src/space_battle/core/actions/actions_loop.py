@@ -27,7 +27,7 @@ class ActionsLoop(ActionsLoopBase):
     def _default_behaviour(self):
         action = None
         try:
-            action = self._queue.get(timeout=0.5)
+            action = self._queue.get(timeout=0.1)
         except Empty:
             pass
         if action:
@@ -65,6 +65,14 @@ class ActionsLoop(ActionsLoopBase):
     @after.setter
     def after(self, after: Callable[[], None]):
         self._after = after
+
+    @property
+    def queue(self) -> ActionsQueueBase | Queue:
+        return self._queue
+
+    @property
+    def is_in_thread(self) -> bool:
+        return self._thread == threading.current_thread()
 
     def run(self):
         """Запуск цикла обработки действий (команд)"""

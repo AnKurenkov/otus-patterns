@@ -96,7 +96,7 @@ class TestActionsLoop:
         actions_loop = actions_loop_fixture(q)
         q.put(Ioc.resolve("StubAction", ActionBase, "act1"))
         q.put(Ioc.resolve("StubAction", ActionBase, "act2"))
-        q.put(SoftStopAction(actions_loop, q))
+        q.put(SoftStopAction(actions_loop))
         q.put(Ioc.resolve("StubAction", ActionBase, "act3"))
 
         event = threading.Event()
