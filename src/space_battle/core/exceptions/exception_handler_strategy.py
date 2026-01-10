@@ -1,6 +1,6 @@
 from typing import Type
 
-from src.space_battle.core.actions.exception_action import (
+from src.space_battle.core.actions.exception_actions import (
     LogExceptionAction,
     PutRepeatExceptionInQueueAction,
     PutSecondRepeatExceptionInQueueAction,

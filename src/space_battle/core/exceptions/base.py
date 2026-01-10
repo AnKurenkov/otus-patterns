@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Type, TypeVar
 
-from src.space_battle.core.actions.base import ActionBase, ActionQueueBase
-from src.space_battle.core.actions.exception_action import ExceptionActionBase
+from src.space_battle.core.actions.base import ActionBase, ActionsQueueBase
+from src.space_battle.core.actions.exception_actions import ExceptionActionBase
 
 
 class SpaceBattleError(Exception):
@@ -24,7 +24,7 @@ class ExceptionHandlerBase(ABC):
 
     @staticmethod
     @abstractmethod
-    def handle(queue: ActionQueueBase, action: ActionBase, exception: Exception) -> ExceptionActionBase:
+    def handle(queue: ActionsQueueBase, action: ActionBase, exception: Exception) -> ExceptionActionBase:
         """Обработать исключение"""
 
     @staticmethod

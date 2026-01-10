@@ -3,8 +3,8 @@ from unittest.mock import Mock
 
 import pytest
 
-from src.space_battle.core.actions.base import ActionBase, ActionQueueBase
-from src.space_battle.core.actions.exception_action import (
+from src.space_battle.core.actions.base import ActionBase, ActionsQueueBase
+from src.space_battle.core.actions.exception_actions import (
     LogExceptionAction,
     PutRepeatExceptionInQueueAction,
     PutSecondRepeatExceptionInQueueAction,
@@ -26,17 +26,17 @@ def mock_action():
 
 @pytest.fixture
 def stub_queue():
-    class StubActionQueue(ActionQueueBase):
+    class StubActionsQueue(ActionsQueueBase):
         _queue = queue.Queue()
 
-        def put(self, action: ActionBase) -> bool:
+        def put(self, action: ActionBase, *args, **kwargs):
             self._queue.put(action)
             return True
 
         def get(self) -> ActionBase:
             return self._queue.get()
 
-    return StubActionQueue()
+    return StubActionsQueue()
 
 
 @pytest.fixture
