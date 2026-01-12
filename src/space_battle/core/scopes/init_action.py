@@ -1,5 +1,5 @@
 import threading
-from typing import Any, Callable, cast
+from typing import Any, Callable, TypeAlias, cast
 
 from src.space_battle.core.actions.base import ActionBase
 from src.space_battle.core.ioc import Ioc
@@ -9,12 +9,14 @@ from .dependency_resolver import DependencyResolver
 from .register_dependency_action import RegisterDependencyAction
 from .set_current_scope_action import SetCurrentScopeAction
 
+Scope: TypeAlias = dict[str, Callable[[list], Any]]
+
 
 class InitAction(ActionBase):
     current_scopes = threading.local()
     current_scopes.value = None
     _root_scope_lock = threading.Lock()
-    _root_scope: dict[str, Callable[[list], Any]] = {}
+    _root_scope: Scope = {}
     _already_executes_successfully = False
 
     @staticmethod
@@ -23,7 +25,7 @@ class InitAction(ActionBase):
 
     @staticmethod
     def _creating_scope(*args):
-        creating_scope = Ioc.resolve("IoC.Scope.Create.Empty", dict[str, Callable[[list], Any]])
+        creating_scope = Ioc.resolve("IoC.Scope.Create.Empty", Scope)
         if len(args) > 0:
             parent_scope = args[0]
         else:
@@ -40,7 +42,7 @@ class InitAction(ActionBase):
         return dependency_resolver.resolve(dependency, *args)
 
     @property
-    def root_scope(self) -> dict[str, Callable[[list], Any]]:
+    def root_scope(self) -> Scope:
         return self._root_scope
 
     @classmethod
@@ -71,7 +73,7 @@ class InitAction(ActionBase):
             lambda *args: InitAction._raise_exception("The root scope has no a parent scope."),
         )
 
-        InitAction.set_root_scope_item("IoC.Scope.Create.Empty", lambda *args: dict[str, Callable[[list], Any]]())
+        InitAction.set_root_scope_item("IoC.Scope.Create.Empty", lambda *args: Scope())
 
         InitAction.set_root_scope_item("IoC.Scope.Create", lambda *args: InitAction._creating_scope(*args))
 

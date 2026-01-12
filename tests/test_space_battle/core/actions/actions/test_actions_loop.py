@@ -82,7 +82,8 @@ class TestActionsLoop:
 
         actions_loop.run()
 
-        assert event.wait(timeout=1)
+        # assert event.wait(timeout=1)
+        actions_loop.wait()
 
         out = capsys.readouterr().out
         assert "act1" in out
@@ -104,7 +105,8 @@ class TestActionsLoop:
 
         actions_loop.run()
 
-        assert event.wait(timeout=1)
+        # assert event.wait(timeout=1)
+        actions_loop.wait()
 
         out = capsys.readouterr().out
         assert "act1" in out

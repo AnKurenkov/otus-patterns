@@ -2,13 +2,12 @@ import threading
 from queue import Empty, Queue
 from typing import Callable
 
+from src.space_battle.core.actions.base import ActionBase, ActionsLoopBase, ActionsQueueBase
 from src.space_battle.core.ioc import Ioc
 
-from .base import ActionBase, ActionsLoopBase, ActionsQueueBase
 
-
-class ActionsLoop(ActionsLoopBase):
-    """Цикл обработки действий (команд)"""
+class ServerThread(ActionsLoopBase):
+    """Серверный поток обработки Игр и внешних действий (команд) Агентов"""
 
     def __init__(self, queue: ActionsQueueBase | Queue):
         self._running = False
