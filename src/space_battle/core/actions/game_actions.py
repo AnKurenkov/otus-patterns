@@ -25,7 +25,7 @@ class SchedulerBase(ABC):
 class GameAction(ActionBase):
     """Действие Игры"""
 
-    def __init__(self, time_sec: float, scheduler: SchedulerBase):
+    def __init__(self, time_sec: float, scheduler: SchedulerBase, initial=None):
         self._uuid = uuid.uuid4()
         self._time = time_sec
         self._scheduler = scheduler
@@ -33,22 +33,20 @@ class GameAction(ActionBase):
         self._scope: Scope = Ioc.resolve("IoC.Scope.Create", Any)
         Ioc.resolve("IoC.Scope.Current.Set", ActionBase, self._scope).execute()
         # TODO: реализовать команды "Game.Init", "Game.queue" (см. Урок 20, 1:10:00)
-        # Ioc.resolve("IoC.Register", ActionBase, "Game.Queue", self._queue)
+        Ioc.resolve("IoC.Register", ActionBase, "Game.Queue", lambda: self._queue).execute()
         # self._queue.put(Ioc.resolve("Game.Init", ActionBase, initial))
+        Ioc.resolve("Game.Init", ActionBase, initial).execute()
 
     def execute(self):
         Ioc.resolve("IoC.Scope.Current.Set", ActionBase, self._scope).execute()
 
-        stop = False
-        # stop = Ioc.resolve("Game.IsOver", bool)  # TODO: Иниц. флаг "Game.IsOver" в команде "Game.Init"
-
         current_time = perf_counter()
-        while not stop and (current_time + self._time > perf_counter()):
+        while not Ioc.resolve("Game.IsOver", bool) and (current_time + self._time > perf_counter()):
             if not self._queue.empty():
                 action = self._queue.get(block=False)
                 action.execute()
 
-        if not stop:
+        if not Ioc.resolve("Game.IsOver", bool):
             self._scheduler.add(self)
 
     @property
@@ -58,6 +56,19 @@ class GameAction(ActionBase):
     @property
     def queue(self):
         return self._queue
+
+
+class GameInitAction(ActionBase):
+    def __init__(self, initial=None):
+        self._initial = initial
+
+    def execute(self):
+        Ioc.resolve("IoC.Register", ActionBase, "Game.IsOver", lambda: False).execute()
+
+
+class GameStopAction(ActionBase):
+    def execute(self):
+        Ioc.resolve("IoC.Register", ActionBase, "Game.IsOver", lambda: True).execute()
 
 
 class SchedulerAction(ActionBase, SchedulerBase):
@@ -70,7 +81,7 @@ class SchedulerAction(ActionBase, SchedulerBase):
         self._queue.put(action, block=False)
 
     def has_work(self) -> bool:
-        return self._queue.empty()
+        return not self._queue.empty()
 
     def execute(self):
         if not self._queue.empty():
@@ -79,3 +90,4 @@ class SchedulerAction(ActionBase, SchedulerBase):
 
 
 # TODO: Добавить обработку SchedulerAction в ActionsLoop (ServerThread) (см. Урок 20, 1:40:00)
+#  - добавил UseSchedulerAction в core.server.actions
