@@ -85,7 +85,7 @@ class InitAction(ActionBase):
             lambda *args: RegisterDependencyAction(str(args[0]), cast(Callable[[list[Any]], Any], args[1])),
         )
 
-        InitAction.set_root_scope_item("IoC.Scope.Debug.CurrentInfo", lambda args: InitAction._debug_current_info())
+        InitAction.set_root_scope_item("IoC.Scope.Debug.CurrentInfo", lambda: InitAction._debug_current_info())
 
         Ioc.resolve(
             "Update Ioc Resolve Dependency Strategy",

@@ -64,7 +64,7 @@ class TestGameActions:
     def test_scheduler_action(capsys):
         Ioc.resolve("IoC.Register", ActionBase, "Game.Init", lambda init: GameInitAction(init)).execute()
         scheduler = SchedulerAction()
-        game_action = GameAction(0.05, scheduler)
+        game_action = GameAction(0.05, scheduler)  # TODO: определить init и передать в игру
         game_queue = Ioc.resolve("Game.Queue", Queue)
 
         game_queue.put(Ioc.resolve("StubAction", ActionBase, "act1"))

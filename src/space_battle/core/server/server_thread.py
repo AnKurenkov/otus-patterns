@@ -1,9 +1,13 @@
+import logging
 import threading
 from queue import Empty, Queue
 from typing import Callable
 
 from src.space_battle.core.actions.base import ActionBase, ActionsLoopBase, ActionsQueueBase
 from src.space_battle.core.ioc import Ioc
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 class ServerThread(ActionsLoopBase):
@@ -29,6 +33,8 @@ class ServerThread(ActionsLoopBase):
             action = self._queue.get(timeout=0.1)
         except Empty:
             pass
+        # TODO: изменить логику, чтобы выбирать баланс между внешними сообщениями и существующими играми,
+        #  или переопределять поведение/стратегию динамически (см. Урок 20, 1:33:00)
         if action:
             try:
                 action.execute()

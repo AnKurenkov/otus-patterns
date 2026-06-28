@@ -3,6 +3,15 @@ from abc import ABC, abstractmethod
 from src.space_battle.core.space import Direction, Point, PolarVelocity
 
 
+class GameObjectBase(ABC):
+    """Абстрактный базовый класс для игрового объекта"""  # TODO: перенести отсюда
+
+    @property
+    @abstractmethod
+    def id(self):
+        """Получить id объекта"""
+
+
 class Movable(ABC):
     """Абстрактный базовый класс для движущихся прямолинейно объектов"""
 

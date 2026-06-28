@@ -58,9 +58,9 @@ class UseSchedulerAction(ActionBase):
             else:
                 if not self._server_thread.queue.empty():
                     old_behaviour()
-                    try:
-                        self._scheduler.execute()
-                    except Exception as e:
-                        Ioc.resolve("HandleException", ActionBase, self._scheduler, e).execute()
+                try:
+                    self._scheduler.execute()
+                except Exception as e:
+                    Ioc.resolve("HandleException", ActionBase, self._scheduler, e).execute()
 
         self._server_thread.behaviour = new_behaviour
