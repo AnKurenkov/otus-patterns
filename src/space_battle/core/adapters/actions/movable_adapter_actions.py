@@ -16,7 +16,7 @@ class IocRegisterMovableAction(ActionBase):
             lambda obj, location: MovableLocationSetAction(obj, location),
         ).execute()
         Ioc.resolve(
-            "IoC.Register", ActionBase, "Movable.velocity.Get", lambda obj: MovableVelocityGetction(obj).execute()
+            "IoC.Register", ActionBase, "Movable.velocity.Get", lambda obj: MovableVelocityGetAction(obj).execute()
         ).execute()
 
 
@@ -37,7 +37,7 @@ class MovableLocationSetAction(ActionBase):
         setattr(self._obj, "_location", self._location)
 
 
-class MovableVelocityGetction(ActionBase):
+class MovableVelocityGetAction(ActionBase):
     def __init__(self, obj: Movable):
         self._obj = obj
 

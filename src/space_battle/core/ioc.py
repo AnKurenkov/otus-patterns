@@ -1,8 +1,12 @@
-from typing import Any, Callable, Type, TypeVar, cast, get_origin
+from typing import Any, Callable, Type, TypeAlias, TypeVar, cast, get_origin
 
 from src.space_battle.core.actions.base import ActionBase
 
 T = TypeVar("T")
+
+
+Scope: TypeAlias = dict[str, Callable[[list], Any]]
+Strategy: TypeAlias = Callable[[str, list[Any]], Any]
 
 
 class Ioc:
@@ -10,7 +14,8 @@ class Ioc:
     Контейнер инверсии зависимостей (Расширяемая фабрика).
     """
 
-    strategy: Callable[[str, list[Any]], Any] = staticmethod(
+    _root_scope: Scope = {}
+    strategy: Strategy = staticmethod(
         lambda dependency, *args: (
             UpdateIocResolveDependencyStrategyAction(
                 args[0]  # Callable[[Callable[[str, list[Any]], Any]], Callable[[str, list[Any]], Any]]
@@ -20,12 +25,16 @@ class Ioc:
         )
     )
 
+    @classmethod
+    def get_root_scope(cls) -> dict:
+        return cls._root_scope
+
     @staticmethod
     def _raise_dependency_not_found(dependency: str):
         raise ValueError(f"Dependency '{dependency}' is not found.")
 
-    @staticmethod
-    def resolve(dependency: str, expected_type: Type[T], *args: Any) -> T:
+    @classmethod
+    def resolve(cls, dependency: str, expected_type: Type[T], *args: Any) -> T:
         """
         Разрешение зависимости по имени.
         :param dependency: Строковое имя зависимости. В реализации контейнера
@@ -42,7 +51,7 @@ class Ioc:
         Если полученный объект невозможно привести в запрашиваемому типу или указана несуществующая зависимость,
         то выбрасывается исключение.
         """
-        obj = Ioc.strategy(dependency, *args)
+        obj = cls.strategy(dependency, *args)
         if expected_type is not None and expected_type is not Any:
             origin = get_origin(expected_type)
             if origin is None:

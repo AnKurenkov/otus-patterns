@@ -3,7 +3,6 @@ from src.space_battle.core.actions.base import ActionBase
 from .thread_scope_context import ThreadScopeContext
 
 
-class ClearCurrentScopeAction(ActionBase):
-
+class GetCurrentScopeAction(ActionBase):
     def execute(self):
-        ThreadScopeContext.clear_current_scope()
+        return ThreadScopeContext.get_current_scope()

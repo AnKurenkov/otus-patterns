@@ -1,7 +1,6 @@
 import logging
-from queue import Queue
 
-from src.space_battle.core.actions.base import ActionBase, ActionsLoopBase, ActionsQueueBase
+from src.space_battle.core.actions.base import ActionBase, ActionsLoopBase
 
 logger = logging.getLogger(__name__)
 
@@ -13,23 +12,28 @@ class HardStopAction(ActionBase):
         self._actions_loop = actions_loop
 
     def execute(self):
-        self._actions_loop.stop()
+        if self._actions_loop.is_in_thread:
+            self._actions_loop.stop()
+        else:
+            raise Exception("Попытка остановить очередь из другого потока.")
 
 
 class SoftStopAction(ActionBase):
     """Команда для мягкой остановки ActionsLoop после обработки текущей очереди"""
 
-    def __init__(self, actions_loop: ActionsLoopBase, queue: ActionsQueueBase | Queue):
+    def __init__(self, actions_loop: ActionsLoopBase):
         self._actions_loop = actions_loop
-        self._queue = queue
 
     def execute(self):
         old_behaviour = self._actions_loop.behaviour
 
         def new_behaviour():
-            if not self._queue.empty():
+            if not self._actions_loop.queue.empty():
                 old_behaviour()
             else:
-                self._actions_loop.stop()
+                if self._actions_loop.is_in_thread:
+                    self._actions_loop.stop()
+                else:
+                    raise Exception("Попытка остановить очередь из другого потока.")
 
         self._actions_loop.behaviour = new_behaviour
