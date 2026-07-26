@@ -1,0 +1,17 @@
+---
+config:
+  layout: elk
+---
+graph LR
+    GW[API Gateway] --> US[User Service]
+    GW --> TS[Tournament Service]
+    GW --> GS[Game Service]
+    GW --> RS[Rating Service]
+    GW --> NS[Notification Service]
+    
+    
+    TS --> US
+    TS --> RS
+    GS --> US
+    GS --> RS    
+    RS --> US

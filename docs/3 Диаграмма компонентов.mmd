@@ -1,0 +1,62 @@
+---
+config:
+  layout: elk
+---
+graph TB
+    subgraph GS["Game Service"]
+        GS_WS["WebSocket Endpoint<br/>/ws/game/{gameId}"]
+        GS_REST["REST Endpoint<br/>/api/game"]
+        
+        subgraph GE["Game Engine"]
+            GE_Queue["Command Queue"]
+            GE_Executor["Command Executor"]
+            GE_State["State Manager"]
+            GE_Physics["Physics Engine"]
+            GE_Collision["Collision Detector"]
+        end
+        
+        GE_GameManager["Game Manager<br/>Создание/управление играми"]
+        GE_ConnectionManager["Connection Manager<br/>Управление WebSocket соединениями"]
+        
+        GS_DB[("Game DB")]
+        GS_Cache[("Redis Cache")]
+        
+        GS_Queue["Message Queue Producer"]
+    end
+    
+    MQ["Message Queue"]
+    WS_Agent["WebSocket to Agent"]
+    
+    GS_WS --> GE_GameManager
+    GS_REST --> GE_GameManager
+    GE_GameManager --> GE_Queue
+    GE_Queue --> GE_Executor
+    GE_Executor --> GE_State
+    GE_State --> GE_Physics
+    GE_Physics --> GE_Collision
+    GE_Collision --> GE_State
+    
+    GE_State --> GS_DB
+    GE_State --> GS_Cache
+    
+    GE_Executor --> GS_Queue
+    GS_Queue --> MQ
+    
+    GE_ConnectionManager --> GS_WS
+    GE_ConnectionManager --> WS_Agent
+    
+    classDef wsEndpoint stroke:#38bdf8,fill:#f0f9ff
+    classDef restEndpoint stroke:#818cf8,fill:#eef2ff
+    classDef gameEngine stroke:#4ade80,fill:#f0fdf4
+    classDef manager stroke:#a78bfa,fill:#f5f3ff
+    classDef database stroke:#fb923c,fill:#fff7ed
+    classDef queue stroke:#2dd4bf,fill:#f0fdfa
+    classDef external stroke:#f87171,fill:#fef2f2
+    
+    class GS_WS wsEndpoint
+    class GS_REST restEndpoint
+    class GE_Queue,GE_Executor,GE_State,GE_Physics,GE_Collision gameEngine
+    class GE_GameManager,GE_ConnectionManager manager
+    class GS_DB,GS_Cache database
+    class GS_Queue,MQ queue
+    class WS_Agent external

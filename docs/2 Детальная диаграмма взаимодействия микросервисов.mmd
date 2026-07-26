@@ -1,0 +1,40 @@
+sequenceDiagram
+    participant User as Пользователь
+    participant Web as Веб-приложение
+    participant GW as API Gateway
+    participant US as User Service
+    participant TS as Tournament Service
+    participant GS as Game Service
+    participant NS as Notification Service
+    participant Agent as Агент
+    participant RS as Rating Service
+    User->>Web: Регистрация/Вход
+    Web->>GW: Запрос
+    GW->>US: Аутентификация
+    US-->>GW: Token
+    GW-->>Web: Ответ
+    User->>Web: Список турниров
+    Web->>GW: GET /tournaments
+    GW->>TS: Запрос турниров
+    TS-->>GW: Список турниров
+    GW-->>Web: Ответ
+    User->>Web: Подача заявки на турнир
+    Web->>GW: POST /tournaments/{id}/apply
+    GW->>TS: Проверка и создание заявки
+    TS->>NS: Уведомление организатору
+    NS-->>Web: Уведомление
+    GW-->>Web: Статус заявки
+    Note over TS,GS: Начало турнира
+    TS->>GS: Создать игру
+    GS->>Agent: Запрос на подключение
+    Agent->>GS: Подключение
+    loop Игровой цикл
+        Agent->>GS: Команды
+        GS->>GS: Обработка команд
+        GS->>Agent: Обновление состояния
+    end
+    GS->>GS: Завершение игры
+    GS->>RS: Результаты
+    RS->>US: Обновить рейтинг
+    GS->>NS: Уведомления о завершении
+    NS-->>Web: Уведомление

@@ -1,0 +1,49 @@
+---
+config:
+  layout: elk
+---
+graph TB
+    subgraph "Клиентский слой"
+        WEB[Веб-приложение<br/>Пользовательский интерфейс]
+        AGENT[Агент<br/>Игровой алгоритм]
+    end
+    
+    subgraph "Шлюз API"
+        GW[API Gateway<br/>Маршрутизация, аутентификация]
+    end
+    
+    subgraph "Микросервисы"
+        US[User Service<br/>Управление пользователями]
+        TS[Tournament Service<br/>Управление турнирами]
+        RS[Rating Service<br/>Рейтинги и статистика]
+        GS[Game Service<br/>Игровая логика]
+        NS[Notification Service<br/>Уведомления]        
+    end
+    
+    subgraph "Хранилища данных"
+        DB_USER[(User DB)]
+        DB_TOURNAMENT[(Tournament DB)]
+        DB_GAME[(Game State DB)]
+        DB_RATING[(Rating DB)]        
+        CACHE[(Redis Cache)]
+        MQ[Message Queue<br/>RabbitMQ/Kafka]
+    end
+    
+    WEB --> GW
+    AGENT --> GW
+    GW --> US
+    GW --> TS
+    GW --> RS
+    GW --> GS
+    GW --> NS
+    
+    US --> DB_USER
+    TS --> DB_TOURNAMENT
+    GS --> DB_GAME
+    RS --> DB_RATING    
+    
+    US -.-> CACHE
+    TS -.-> CACHE
+    GS -.-> MQ
+    MQ -.-> NS
+    

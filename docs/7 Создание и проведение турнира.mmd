@@ -1,0 +1,34 @@
+sequenceDiagram
+    participant User
+    participant Web
+    participant GW
+    participant TS
+    participant NS
+    participant US
+    participant GS
+    
+    User->>Web: Создание турнира
+    Web->>GW: POST /tournaments
+    GW->>TS: Проверка прав
+    TS->>US: Проверка пользователя
+    US-->>TS: OK
+    TS->>TS: Создание турнира
+    TS->>NS: Уведомление о создании
+    NS-->>Web: Уведомление
+    TS-->>GW: Турнир создан
+    GW-->>Web: Ответ
+    
+    Note over TS,GS: Начало турнира
+    
+    TS->>US: Получение участников
+    US-->>TS: Список участников
+    TS->>GS: Создание игр
+    GS->>GS: Инициализация игр
+    GS->>NS: Приглашения участникам
+    NS-->>Users: Уведомления
+    
+    GS->>GS: Проведение игр
+    GS->>TS: Завершение игр
+    TS->>RS: Расчет рейтинга
+    RS->>US: Обновление рейтингов
+    TS->>NS: Уведомление о завершении
