@@ -1,0 +1,14 @@
+---
+config:
+  layout: dagre
+---
+graph LR
+    GS[Game Service] --> MQ[Message Queue]
+    MQ --> NS[Notification Service]
+    MQ --> RS[Rating Service]    
+    
+    TS[Tournament Service] --> MQ
+    MQ --> GS[Game Service]
+    
+    US[User Service] --> MQ
+    MQ --> TS

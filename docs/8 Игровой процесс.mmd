@@ -1,0 +1,28 @@
+sequenceDiagram
+    participant Agent
+    participant GW
+    participant GS
+    participant Engine as Game Engine
+    participant DB
+    
+    Agent->>GW: WebSocket подключение
+    GW->>GS: Прокси WS соединения
+    GS->>GS: Авторизация
+    GS-->>Agent: Подключение установлено
+    
+    loop Игровой цикл (60 раз в секунду)
+        Agent->>GS: Команда (Move, Shoot, etc.)
+        GS->>Engine: Добавление в очередь
+        Note over Engine: Обработка с приоритетом
+        Engine->>Engine: Выполнение команд
+        Engine->>Engine: Обновление физики
+        Engine->>Engine: Проверка столкновений
+        Engine->>DB: Сохранение состояния
+        Engine->>GS: Состояние игры
+        GS->>Agent: Обновление состояния
+    end
+    
+    Note over GS,Agent: Завершение игры
+    Engine->>GS: Игра завершена
+    GS->>GW: Результаты
+    GW-->>Agent: Завершение

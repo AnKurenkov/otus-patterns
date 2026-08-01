@@ -1,0 +1,16 @@
+sequenceDiagram
+    participant User
+    participant Web
+    participant GW
+    participant US
+    participant DB
+    
+    User->>Web: Ввод данных
+    Web->>GW: POST /auth/register
+    GW->>US: Проверка данных
+    US->>DB: Проверка уникальности
+    DB-->>US: OK
+    US->>DB: Сохранение пользователя
+    US-->>GW: Пользователь создан
+    GW-->>Web: JWT токен
+    Web-->>User: Успешная регистрация
