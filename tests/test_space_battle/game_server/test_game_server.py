@@ -3,16 +3,16 @@ from queue import Queue
 
 import pytest
 
-from src.space_battle.app.app import app
 from src.space_battle.core.actions.base import ActionBase
 from src.space_battle.core.actions.game_actions import GameAction, SchedulerAction
 from src.space_battle.core.ioc import Ioc
 from src.space_battle.core.server.actions import UseSchedulerAction
 from src.space_battle.core.server.game_router import game_router
 from src.space_battle.core.server.server_thread import ServerThread
+from src.space_battle.game_server.app import app
 
 
-class TestApp:
+class TestGameServer:
     @staticmethod
     @pytest.fixture(scope="class", autouse=True)
     def class_setup():

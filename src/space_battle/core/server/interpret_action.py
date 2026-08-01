@@ -1,8 +1,8 @@
-from src.space_battle.app.models.message import MessageModel
 from src.space_battle.core.actions.base import ActionBase
 from src.space_battle.core.actions.game_actions import GameAction
 from src.space_battle.core.ioc import Ioc
 from src.space_battle.core.server.game_router import game_router
+from src.space_battle.game_server.models import AgentMessageModel
 
 
 class InterpretAction(ActionBase):
@@ -14,8 +14,8 @@ class InterpretAction(ActionBase):
     4. Полученную команду кладёт в очередь той же игры.
     """
 
-    def __init__(self, message: MessageModel):
-        self._msg: MessageModel = message
+    def __init__(self, message: AgentMessageModel):
+        self._msg: AgentMessageModel = message
 
     def execute(self) -> None:
         game: GameAction = game_router.get(self._msg.game_id)
