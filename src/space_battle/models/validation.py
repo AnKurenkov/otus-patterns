@@ -17,14 +17,13 @@ def validate_pydantic(model_class):
                     return (
                         jsonify(
                             ResponseModel(
-                                status="error", message="Empty request body", request_id=str(uuid.uuid4())
+                                status="error", message="Empty request body.", request_id=str(uuid.uuid4())
                             ).model_dump()
                         ),
                         400,
                     )
-
                 validated_data = model_class(**json_data)
-                kwargs["message"] = validated_data
+                kwargs["request"] = validated_data
                 return f(*args, **kwargs)
             except ValidationError as e:
                 return (

@@ -1,8 +1,11 @@
 import threading
+import time
 from queue import Queue
 
+import jwt
 import pytest
 
+from src.space_battle.config import ALGORITHM, SECRET_KEY
 from src.space_battle.core.actions.base import ActionBase
 from src.space_battle.core.actions.game_actions import GameAction, SchedulerAction
 from src.space_battle.core.ioc import Ioc
@@ -82,6 +85,8 @@ class TestGameServer:
 
         server_thread.run()
 
+        token = jwt.encode({"game_id": game.id, "exp": int(time.time()) + 3600}, SECRET_KEY, ALGORITHM)
+        headers = {"Authorization": f"Bearer {token}"}
         msg = {
             "agent_id": "agent_1",
             "game_id": game.id,
@@ -89,9 +94,7 @@ class TestGameServer:
             "action_id": "StubAction",
             "data": {"msg": "act1"},
         }
-        response = client.post(
-            "http://localhost:5000/api/message", json=msg, headers={"Content-Type": "application/json"}
-        )
+        response = client.post("/api/message", json=msg, headers=headers)
 
         assert response.status_code == 202
         assert response.json["status"] == "accepted"

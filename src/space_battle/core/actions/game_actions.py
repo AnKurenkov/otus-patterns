@@ -27,8 +27,10 @@ class SchedulerBase(ABC):
 class GameAction(ActionBase):
     """Действие Игры"""
 
-    def __init__(self, time_sec: float, scheduler: SchedulerBase, initial=None):
-        self._uuid = str(uuid.uuid4())  # TODO: определять в initial
+    def __init__(self, time_sec: float, scheduler: SchedulerBase, initial: dict = None):
+        self._uuid = (
+            initial.get("id", str(uuid.uuid4())) if initial else str(uuid.uuid4())
+        )  # TODO: определять в initial
         self._objects: dict[str, GameObjectBase] = {}  # TODO: определять в initial
         self._time = time_sec
         self._scheduler = scheduler

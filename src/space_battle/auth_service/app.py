@@ -10,7 +10,7 @@ from src.space_battle.models import ResponseModel, validate_pydantic
 
 app = Flask(__name__)
 
-# In-memory хранилище (в продакшене здесь будет БД)
+# TODO: заменить in-memory хранилище на БД
 # Формат: {game_id: [user_id_1, user_id_2, ...]}
 games_db: dict[str, list[str]] = {}
 
@@ -63,4 +63,4 @@ def get_token(request: TokenRequestModel):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
+    app.run(host="0.0.0.0", port=8002)
