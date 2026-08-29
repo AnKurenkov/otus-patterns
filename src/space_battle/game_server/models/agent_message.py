@@ -3,7 +3,7 @@ from typing import Any, Dict
 from pydantic import BaseModel, Field
 
 
-class MessageModel(BaseModel):
+class AgentMessageModel(BaseModel):
     """Модель для входящих сообщений от агента"""
 
     agent_id: str = Field(..., description="Уникальный идентификатор агента")
