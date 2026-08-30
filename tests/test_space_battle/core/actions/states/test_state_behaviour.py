@@ -1,4 +1,5 @@
 import logging
+import threading
 import time
 from queue import Queue
 
@@ -7,6 +8,7 @@ import pytest
 from src.space_battle.core.actions.actions_loop import ActionsLoop
 from src.space_battle.core.actions.base import ActionBase
 from src.space_battle.core.actions.states import (
+    HardStopCommand,
     MoveToCommand,
     MoveToState,
     NormalState,
@@ -118,3 +120,31 @@ class TestStateActionsLoopBehaviour:
 
         actions_loop.stop()
         actions_loop.wait()
+
+    @staticmethod
+    def test_hard_stop_command_terminates_thread(actions_loop_fixture, capsys):
+        q: Queue = Queue()
+        actions_loop = actions_loop_fixture(q)
+        behaviour = StateActionsLoopBehaviour(actions_loop, NormalState())
+        actions_loop.behaviour = behaviour
+
+        # Команды до HardStop выполняются, после — нет.
+        q.put(Ioc.resolve("StubAction", ActionBase, "before-hard-stop"))
+        q.put(HardStopCommand())
+        q.put(Ioc.resolve("StubAction", ActionBase, "after-hard-stop"))
+
+        # Сигнал о выходе из цикла (вызов _after), если поток завершился сам.
+        terminated = threading.Event()
+        actions_loop.after = terminated.set
+
+        actions_loop.run()
+
+        # Поток должен завершиться по HardStopCommand, а не по команде stop() извне.
+        assert terminated.wait(timeout=2), "Поток не завершился после HardStopCommand"
+
+        actions_loop.wait()
+
+        out = capsys.readouterr().out
+        assert "before-hard-stop" in out
+        assert "after-hard-stop" not in out
+        assert not q.empty()
