@@ -54,3 +54,43 @@ class FuelableStub(Fuelable):
     @property
     def fuel_consumption(self) -> int:
         return self._fuel_consumption
+
+
+class SpaceshipStub(Movable, Rotatable):
+    def __init__(self, location: Point, velocity: PolarVelocity, direction: Direction, angular_velocity: int):
+        self._location = location
+        self._velocity = velocity
+        self._direction = direction
+        self._angular_velocity = angular_velocity
+
+    @property
+    def location(self) -> Point:
+        return self._location
+
+    @location.setter
+    def location(self, location: Point):
+        self._location = location
+
+    @property
+    def velocity(self) -> PolarVelocity:
+        return self._velocity
+
+    @velocity.setter
+    def velocity(self, velocity: PolarVelocity):
+        self._velocity = velocity
+
+    @property
+    def direction(self) -> Direction:
+        return self._direction
+
+    @direction.setter
+    def direction(self, direction: Direction):
+        self._direction = direction
+
+    @property
+    def angular_velocity(self) -> int:
+        return self._angular_velocity
+
+    @angular_velocity.setter
+    def angular_velocity(self, angular_velocity: int):
+        self._angular_velocity = angular_velocity
