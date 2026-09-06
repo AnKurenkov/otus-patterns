@@ -10,6 +10,7 @@ pip-log.txt
 pip-delete-this-directory.txt
 .tox/
 .coverage
+coverage.xml
 htmlcov/
 .pytest_cache/
 .mypy_cache/

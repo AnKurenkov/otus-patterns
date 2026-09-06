@@ -28,3 +28,18 @@ in-place=true
 ignore-init-module-imports=true
 remove-all-unused-imports = true
 remove-unused-variables = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["--import-mode=importlib"]
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["tests/*", "*/__pycache__/*"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 80
+
+[tool.coverage.html]
+directory = "htmlcov"
