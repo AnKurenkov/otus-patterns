@@ -5,7 +5,9 @@ import jwt
 from flask import Flask, jsonify
 
 from src.space_battle.auth_service.models import GameRequestModel, TokenRequestModel
-from src.space_battle.config import ALGORITHM, SECRET_KEY
+from src.space_battle.config import settings
+from src.space_battle.core.scopes.app_scope import initialize_application_scope
+from src.space_battle.core.scopes.init_action import InitAction
 from src.space_battle.models import ResponseModel, validate_pydantic
 
 app = Flask(__name__)
@@ -50,9 +52,13 @@ def get_token(request: TokenRequestModel):
         )
         return jsonify(response.model_dump()), 403
 
-    payload = {"sub": request.user_id, "game_id": request.game_id, "exp": int(time.time()) + 3600}
+    payload = {
+        "sub": request.user_id,
+        "game_id": request.game_id,
+        "exp": int(time.time()) + settings.token_expiration_seconds,
+    }
     # Подписываем токен
-    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+    token = jwt.encode(payload, settings.secret_key, algorithm=settings.algorithm)
     response = ResponseModel(
         status="success",
         message="",
@@ -63,4 +69,6 @@ def get_token(request: TokenRequestModel):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8002)
+    InitAction().execute()
+    initialize_application_scope()
+    app.run(host=settings.auth_service_host, port=settings.auth_service_port)

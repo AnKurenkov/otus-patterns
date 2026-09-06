@@ -5,7 +5,9 @@ import jwt
 from flask import Flask, g, jsonify
 from flask import request as request_
 
-from src.space_battle.config import ALGORITHM, SECRET_KEY
+from src.space_battle.config import settings
+from src.space_battle.core.scopes.app_scope import initialize_application_scope
+from src.space_battle.core.scopes.init_action import InitAction
 from src.space_battle.core.server.game_router import game_router
 from src.space_battle.core.server.interpret_action import InterpretAction
 from src.space_battle.game_server.models import AgentMessageModel
@@ -36,7 +38,7 @@ def check_jwt_token(f):
         token = auth_header.split(" ", 1)[1]
 
         try:
-            decoded_token = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            decoded_token = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
         except jwt.ExpiredSignatureError:
             response = ResponseModel(
                 status="error",
@@ -104,4 +106,6 @@ def receive_message(request: AgentMessageModel):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8001)
+    InitAction().execute()
+    initialize_application_scope()
+    app.run(host=settings.game_service_host, port=settings.game_service_port)

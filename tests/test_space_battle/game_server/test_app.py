@@ -5,7 +5,7 @@ from queue import Queue
 import jwt
 import pytest
 
-from src.space_battle.config import ALGORITHM, SECRET_KEY
+from src.space_battle.config import settings
 from src.space_battle.core.actions.base import ActionBase
 from src.space_battle.core.actions.game_actions import GameAction, SchedulerAction
 from src.space_battle.core.ioc import Ioc
@@ -85,7 +85,11 @@ class TestGameServer:
 
         server_thread.run()
 
-        token = jwt.encode({"game_id": game.id, "exp": int(time.time()) + 3600}, SECRET_KEY, ALGORITHM)
+        token = jwt.encode(
+            {"game_id": game.id, "exp": int(time.time()) + 3600},
+            settings.secret_key,
+            settings.algorithm,
+        )
         headers = {"Authorization": f"Bearer {token}"}
         msg = {
             "agent_id": "agent_1",

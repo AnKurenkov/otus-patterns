@@ -195,3 +195,26 @@ PUT /api/notifications/{id}/read - Отметка как прочитанное
 | Rating Service |	Средняя |	Алгоритмы расчета	| Strategy Pattern |
 | Notification Service |	Высокая |	Типы, каналы доставки |	Factory Pattern |
 | API	| Средняя |	Версионирование, форматы |	Versioning |
+
+
+# 7. Конфигурация
+
+Настройки приложения вынесены в переменные окружения с префиксом `SPACE_BATTLE_`
+и/или файл `.env` в корне проекта (см. `.env.example`). Смена конфигурации не
+требует правки исходного кода.
+
+| Переменная | Описание | По умолчанию |
+|--|--|--|
+| `SPACE_BATTLE_SECRET_KEY` | Секретный ключ подписи JWT (одинаковый для обоих сервисов) | дефолтный из кода |
+| `SPACE_BATTLE_ALGORITHM` | Алгоритм подписи JWT | `HS256` |
+| `SPACE_BATTLE_GAME_SERVICE_HOST` | Хост Game Service | `0.0.0.0` |
+| `SPACE_BATTLE_GAME_SERVICE_PORT` | Порт Game Service | `8001` |
+| `SPACE_BATTLE_AUTH_SERVICE_HOST` | Хост Auth Service | `0.0.0.0` |
+| `SPACE_BATTLE_AUTH_SERVICE_PORT` | Порт Auth Service | `8002` |
+| `SPACE_BATTLE_TOKEN_EXPIRATION_SECONDS` | Срок жизни JWT-токена, секунды | `3600` |
+
+> **ВАЖНО:** в продакшене всегда задавайте свой `SPACE_BATTLE_SECRET_KEY`.
+
+Объект настроек доступен командам движка через IoC-зависимость `"Config"`,
+зарегистрированную в прикладном скоупе (`initialize_application_scope()`
+в `src/space_battle/core/scopes/app_scope.py`): `Ioc.resolve("Config", Settings)`.
