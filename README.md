@@ -216,5 +216,5 @@ PUT /api/notifications/{id}/read - Отметка как прочитанное
 > **ВАЖНО:** в продакшене всегда задавайте свой `SPACE_BATTLE_SECRET_KEY`.
 
 Объект настроек доступен командам движка через IoC-зависимость `"Config"`,
-зарегистрированную в прикладном скоупе (`initialize_application_scope()`
-в `src/space_battle/core/scopes/app_scope.py`): `Ioc.resolve("Config", Settings)`.
+зарегистрированную в прикладном скоупе (`InitializeApplicationScopeAction().execute()`
+в `src/space_battle/core/scopes/init_app_scope_action.py`): `Ioc.resolve("Config", Settings)`.

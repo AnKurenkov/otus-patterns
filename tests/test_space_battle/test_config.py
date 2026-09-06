@@ -6,10 +6,9 @@ import pytest
 from src.space_battle.config import Settings, settings
 from src.space_battle.core.actions.base import ActionBase
 from src.space_battle.core.ioc import Ioc
-from src.space_battle.core.scopes.app_scope import (
+from src.space_battle.core.scopes.init_app_scope_action import (
     ApplicationScopeError,
-    get_application_scope,
-    initialize_application_scope,
+    InitializeApplicationScopeAction,
 )
 
 
@@ -64,15 +63,18 @@ class TestApplicationScope:
 
     @staticmethod
     def test_get_application_scope_returns_initialized_scope():
-        assert get_application_scope() is not None
+        assert InitializeApplicationScopeAction.get_application_scope() is not None
 
     @staticmethod
     def test_get_application_scope_raises_without_init(monkeypatch):
-        monkeypatch.setattr("src.space_battle.core.scopes.app_scope._APPLICATION_SCOPE", None)
+        monkeypatch.setattr(
+            "src.space_battle.core.scopes.init_app_scope_action.InitializeApplicationScopeAction._application_scope",
+            None,
+        )
         with pytest.raises(ApplicationScopeError):
-            get_application_scope()
+            InitializeApplicationScopeAction.get_application_scope()
 
     @staticmethod
     def test_initialize_application_scope_is_reusable():
-        scope = initialize_application_scope()
-        assert get_application_scope() is scope
+        InitializeApplicationScopeAction().execute()
+        assert InitializeApplicationScopeAction.get_application_scope() is not None

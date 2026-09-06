@@ -6,8 +6,8 @@ from flask import Flask, jsonify
 
 from src.space_battle.auth_service.models import GameRequestModel, TokenRequestModel
 from src.space_battle.config import settings
-from src.space_battle.core.scopes.app_scope import initialize_application_scope
 from src.space_battle.core.scopes.init_action import InitAction
+from src.space_battle.core.scopes.init_app_scope_action import InitializeApplicationScopeAction
 from src.space_battle.models import ResponseModel, validate_pydantic
 
 app = Flask(__name__)
@@ -70,5 +70,5 @@ def get_token(request: TokenRequestModel):
 
 if __name__ == "__main__":
     InitAction().execute()
-    initialize_application_scope()
+    InitializeApplicationScopeAction().execute()
     app.run(host=settings.auth_service_host, port=settings.auth_service_port)

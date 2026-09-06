@@ -6,8 +6,8 @@ from flask import Flask, g, jsonify
 from flask import request as request_
 
 from src.space_battle.config import settings
-from src.space_battle.core.scopes.app_scope import initialize_application_scope
 from src.space_battle.core.scopes.init_action import InitAction
+from src.space_battle.core.scopes.init_app_scope_action import InitializeApplicationScopeAction
 from src.space_battle.core.server.game_router import game_router
 from src.space_battle.core.server.interpret_action import InterpretAction
 from src.space_battle.game_server.models import AgentMessageModel
@@ -107,5 +107,5 @@ def receive_message(request: AgentMessageModel):
 
 if __name__ == "__main__":
     InitAction().execute()
-    initialize_application_scope()
+    InitializeApplicationScopeAction().execute()
     app.run(host=settings.game_service_host, port=settings.game_service_port)

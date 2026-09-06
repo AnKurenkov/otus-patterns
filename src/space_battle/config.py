@@ -34,5 +34,5 @@ class Settings(BaseSettings):
 
 
 # Модульный синглтон. Команды движка получают его через IoC-зависимость "Config"
-# (см. initialize_application_scope в core/scopes/app_scope.py), а не прямым импортом.
+# (см. InitializeApplicationScopeAction в core/scopes/init_app_scope_action.py), а не прямым импортом.
 settings = Settings()
