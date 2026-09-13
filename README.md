@@ -218,3 +218,32 @@ PUT /api/notifications/{id}/read - Отметка как прочитанное
 Объект настроек доступен командам движка через IoC-зависимость `"Config"`,
 зарегистрированную в прикладном скоупе (`InitializeApplicationScopeAction().execute()`
 в `src/space_battle/core/scopes/init_app_scope_action.py`): `Ioc.resolve("Config", Settings)`.
+
+
+# 8. Запуск в Docker
+
+Оба сервиса (`auth_service` и `game_server`) запускаются через Docker Compose.
+Образ собирается из корня проекта с учётом основных пакетов (`src/`).
+
+Требования:
+- установленный Docker Engine и Docker Compose v2;
+- файл `.env` (скопируйте из `.env.example`).
+
+```bash
+# подготовка конфигурации
+cp .env.example .env
+
+# собрать и запустить оба сервиса
+docker compose up --build
+
+# только auth_service (порт 8002) или только game_server (порт 8001)
+docker compose up --build auth_service
+docker compose up --build game_server
+
+# остановить сервисы
+docker compose down
+```
+
+После запуска:
+- Auth Service: `POST http://localhost:8002/game`, `POST http://localhost:8002/auth/token`;
+- Game Service: `POST http://localhost:8001/api/message`.

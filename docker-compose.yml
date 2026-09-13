@@ -1,0 +1,16 @@
+services:
+  auth_service:
+    build: .
+    command: python -m src.space_battle.auth_service.app
+    ports:
+      - "${SPACE_BATTLE_AUTH_SERVICE_PORT}:${SPACE_BATTLE_AUTH_SERVICE_PORT}"
+    env_file:
+      - .env
+
+  game_server:
+    build: .
+    command: python -m src.space_battle.game_server.app
+    ports:
+      - "${SPACE_BATTLE_GAME_SERVICE_PORT}:${SPACE_BATTLE_GAME_SERVICE_PORT}"
+    env_file:
+      - .env
