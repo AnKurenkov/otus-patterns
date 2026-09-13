@@ -145,7 +145,7 @@ class TestGameInitAction:
             GameInitAction(initial).execute()
 
     @staticmethod
-    def test_unknown_interface_raises():
+    def test_unknown_capability_raises():
         initial = {
             "id": "game-1",
             "objects": [{"id": "ship-1", "type": "spaceship", "properties": {"Shootable.location": {"x": 1, "y": 1}}}],
