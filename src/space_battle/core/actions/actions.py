@@ -1,6 +1,6 @@
 from src.space_battle.core.actions.base import ActionBase
-from src.space_battle.core.base import Fuelable, Movable, Rotatable
 from src.space_battle.core.exceptions.exceptions import NotEnoughFuelError
+from src.space_battle.core.objects.capabilities import Fuelable, Movable, Rotatable
 
 
 class Move(ActionBase):

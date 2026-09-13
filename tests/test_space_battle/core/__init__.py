@@ -1,4 +1,4 @@
-from src.space_battle.core.base import Fuelable, Movable, Rotatable
+from src.space_battle.core.objects.capabilities import Fuelable, Movable, Rotatable
 from src.space_battle.core.space import Direction, Point, PolarVelocity
 
 
@@ -19,6 +19,10 @@ class MovableStub(Movable):
     def velocity(self) -> PolarVelocity:
         return self._velocity
 
+    @velocity.setter
+    def velocity(self, velocity: PolarVelocity):
+        self._velocity = velocity
+
 
 class RotatableStub(Rotatable):
     def __init__(self, direction: Direction, angular_velocity: int):
@@ -37,6 +41,10 @@ class RotatableStub(Rotatable):
     def angular_velocity(self) -> int:
         return self._angular_velocity
 
+    @angular_velocity.setter
+    def angular_velocity(self, angular_velocity: int):
+        self._angular_velocity = angular_velocity
+
 
 class FuelableStub(Fuelable):
     def __init__(self, fuel: int, fuel_consumption: int):
@@ -54,6 +62,10 @@ class FuelableStub(Fuelable):
     @property
     def fuel_consumption(self) -> int:
         return self._fuel_consumption
+
+    @fuel_consumption.setter
+    def fuel_consumption(self, fuel_consumption: int):
+        self._fuel_consumption = fuel_consumption
 
 
 class SpaceshipStub(Movable, Rotatable):
