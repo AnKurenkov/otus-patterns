@@ -112,3 +112,55 @@ class TestGameServer:
 
         out = capsys.readouterr().out
         assert "act1" in out
+
+    @staticmethod
+    def test_missing_auth_header_returns_401(client):
+        msg = {
+            "agent_id": "agent_1",
+            "game_id": "game-1",
+            "object_id": "object_1",
+            "action_id": "StubAction",
+            "data": {},
+        }
+        response = client.post("/api/message", json=msg)
+        assert response.status_code == 401
+        assert response.json["status"] == "error"
+        assert response.json["message"] == "Invalid authorization header."
+
+    @staticmethod
+    def test_expired_token_returns_401(client):
+        token = jwt.encode(
+            {"game_id": "game-1", "exp": int(time.time()) - 3600},
+            settings.secret_key,
+            settings.algorithm,
+        )
+        headers = {"Authorization": f"Bearer {token}"}
+        msg = {
+            "agent_id": "agent_1",
+            "game_id": "game-1",
+            "object_id": "object_1",
+            "action_id": "StubAction",
+            "data": {},
+        }
+        response = client.post("/api/message", json=msg, headers=headers)
+        assert response.status_code == 401
+        assert response.json["message"] == "Token has expired."
+
+    @staticmethod
+    def test_missing_game_returns_processing_error_404(client):
+        token = jwt.encode(
+            {"game_id": "unknown-game", "exp": int(time.time()) + 3600},
+            settings.secret_key,
+            settings.algorithm,
+        )
+        headers = {"Authorization": f"Bearer {token}"}
+        msg = {
+            "agent_id": "agent_1",
+            "game_id": "unknown-game",
+            "object_id": "object_1",
+            "action_id": "StubAction",
+            "data": {},
+        }
+        response = client.post("/api/message", json=msg, headers=headers)
+        assert response.status_code == 404
+        assert response.json["status"] == "error"

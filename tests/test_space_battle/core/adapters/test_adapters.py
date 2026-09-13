@@ -6,6 +6,7 @@ import pytest
 from src.space_battle.core.actions.base import ActionBase
 from src.space_battle.core.adapters.actions.create_adapter_action import IocRegisterCreateAdapterAction
 from src.space_battle.core.adapters.actions.movable_adapter_actions import IocRegisterMovableAction
+from src.space_battle.core.adapters.dynamic_adapter_factory import DynamicAdapterFactory
 from src.space_battle.core.exceptions.exceptions import ObjectCapabilityError
 from src.space_battle.core.ioc import Ioc
 from src.space_battle.core.objects.capabilities import Movable
@@ -122,3 +123,35 @@ class TestAdapters:
 
         adapter = Ioc.resolve("Adapter", InterfaceWithMethod, InterfaceWithMethod, object())
         assert adapter.method(5) == 5
+
+    @staticmethod
+    def test_create_adapter_factory_rejects_non_abc():
+        with pytest.raises(ValueError):
+            DynamicAdapterFactory.create_adapter_factory(int)
+
+    @staticmethod
+    def test_adapter_with_void_method_annotation():
+        class InterfaceWithVoidMethod(ABC):
+            @abstractmethod
+            def method(self) -> None: ...
+
+        class VoidMethodAction(ActionBase):
+            executed = False
+
+            def __init__(self, obj):
+                self._obj = obj
+
+            def execute(self):
+                type(self).executed = True
+
+        Ioc.resolve(
+            "IoC.Register",
+            ActionBase,
+            "InterfaceWithVoidMethod.method",
+            lambda obj: VoidMethodAction(obj),
+        ).execute()
+
+        adapter = Ioc.resolve("Adapter", InterfaceWithVoidMethod, InterfaceWithVoidMethod, object())
+        adapter.method()
+
+        assert VoidMethodAction.executed

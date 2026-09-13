@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import pytest
 
@@ -34,3 +35,15 @@ class TestGameInitLoader:
     def test_load_missing_file_treated_as_json_raises():
         with pytest.raises(GameInitError):
             load_initial_from_json("definitely_missing_folder/no_such_game.json")
+
+    @staticmethod
+    def test_unreadable_file_raises(tmp_path, monkeypatch):
+        file = tmp_path / "game.json"
+        file.write_text("{}", encoding="utf-8")
+
+        def _raise_os(*args, **kwargs):
+            raise OSError("read failed")
+
+        monkeypatch.setattr(Path, "read_text", _raise_os)
+        with pytest.raises(GameInitError):
+            load_initial_from_json(file)

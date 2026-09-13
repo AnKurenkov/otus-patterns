@@ -198,3 +198,32 @@ class TestAuthService:
             headers=headers,
         )
         assert response.status_code == 401
+
+    @staticmethod
+    def test_token_for_missing_game_returns_404(auth_client):
+        request = TokenRequestModel(
+            user_id="user_1",
+            game_id="no-such-game",
+        )
+        response = auth_client.post("/auth/token", json=request.model_dump())
+        assert response.status_code == 404
+        assert response.get_json()["message"] == "Game not found."
+
+    @staticmethod
+    def test_create_game_with_empty_body_returns_400(auth_client):
+        response = auth_client.post("/game", json={})
+        assert response.status_code == 400
+        assert response.get_json()["status"] == "error"
+        assert "Empty request" in response.get_json()["message"]
+
+    @staticmethod
+    def test_create_game_with_invalid_body_returns_400(auth_client):
+        response = auth_client.post("/game", json={"participants": "not_a_list"})
+        assert response.status_code == 400
+        assert response.get_json()["status"] == "error"
+        assert "Validation error" in response.get_json()["message"]
+
+    @staticmethod
+    def test_token_with_invalid_body_returns_400(auth_client):
+        response = auth_client.post("/auth/token", json={"user_id": "user_1"})
+        assert response.status_code == 400

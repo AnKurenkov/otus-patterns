@@ -7,6 +7,7 @@ import pytest
 from src.space_battle.core.actions.base import ActionBase
 from src.space_battle.core.actions.game_actions import GameAction, GameInitAction, GameStopAction, SchedulerAction
 from src.space_battle.core.ioc import Ioc
+from src.space_battle.core.objects.game_object_base import GameObjectBase
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +60,19 @@ class TestGameActions:
         out = capsys.readouterr().out
         assert "act1" in out
         assert "act2" not in out
+
+    @staticmethod
+    def test_game_action_scope_and_register_object():
+        Ioc.resolve("IoC.Register", ActionBase, "Game.Init", lambda init: GameInitAction(init)).execute()
+        scheduler = SchedulerAction()
+        game_action = GameAction(0.05, scheduler)
+
+        assert game_action.scope is not None
+
+        obj = GameObjectBase("obj-1", "test")
+        game_action.register_object(obj)
+
+        assert game_action.get_object("obj-1") is obj
 
     @staticmethod
     def test_scheduler_action(capsys):

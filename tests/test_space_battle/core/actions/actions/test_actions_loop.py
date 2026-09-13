@@ -69,6 +69,63 @@ class TestActionsLoop:
         assert event.wait(timeout=1)
 
     @staticmethod
+    def test_before_after_property_getters(actions_loop_fixture):
+        q = Queue()
+        actions_loop = actions_loop_fixture(q)
+        assert callable(actions_loop.before)
+        assert callable(actions_loop.after)
+
+    @staticmethod
+    def test_default_behaviour_handles_exception(actions_loop_fixture):
+        class RaisesAction(ActionBase):
+            def execute(self):
+                raise RuntimeError("boom")
+
+        handled = []
+
+        class HandleExceptionStub(ActionBase):
+            def __init__(self, action, exception):
+                self._action = action
+                self._exception = exception
+                handled.append((self._action, self._exception))
+
+            def execute(self):
+                pass
+
+        Ioc.resolve(
+            "IoC.Register",
+            ActionBase,
+            "HandleException",
+            lambda action, exception: HandleExceptionStub(action, exception),
+        ).execute()
+
+        q = Queue()
+        actions_loop = ActionsLoop(q)
+        q.put(RaisesAction())
+
+        actions_loop._default_behaviour()
+
+        assert len(handled) == 1
+        assert isinstance(handled[0][0], RaisesAction)
+
+    @staticmethod
+    def test_hard_stop_from_main_thread_raises(actions_loop_fixture):
+        q = Queue()
+        actions_loop = actions_loop_fixture(q)
+
+        with pytest.raises(Exception):
+            HardStopAction(actions_loop).execute()
+
+    @staticmethod
+    def test_soft_stop_from_main_thread_raises(actions_loop_fixture):
+        q = Queue()
+        actions_loop = actions_loop_fixture(q)
+        SoftStopAction(actions_loop).execute()
+
+        with pytest.raises(Exception):
+            actions_loop.behaviour()
+
+    @staticmethod
     def test_actions_loop_hard_stop(capsys, actions_loop_fixture):
         q = Queue()
         actions_loop = actions_loop_fixture(q)

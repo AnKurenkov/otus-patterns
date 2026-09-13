@@ -4,6 +4,7 @@ import pytest
 
 from src.space_battle.core.actions.base import ActionBase, ActionsQueueBase
 from src.space_battle.core.actions.exception_actions import (
+    ExceptionActionBase,
     LogExceptionAction,
     PutLogExceptionInQueueAction,
     PutRepeatExceptionInQueueAction,
@@ -27,6 +28,10 @@ def stub_exception():
 
 
 class TestExceptionAction:
+    @staticmethod
+    def test_exception_action_base_execute_is_noop(mock_queue, mock_action, stub_exception):
+        ExceptionActionBase(mock_queue, mock_action, stub_exception).execute()
+
     @staticmethod
     def test_log_exception_action(caplog, mock_queue, mock_action, stub_exception):
         LogExceptionAction(mock_queue, mock_action, stub_exception).execute()

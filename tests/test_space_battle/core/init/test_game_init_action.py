@@ -163,6 +163,39 @@ class TestGameInitAction:
             GameInitAction(initial).execute()
 
     @staticmethod
+    def test_objects_not_a_list_raises():
+        initial = {"id": "game-1", "objects": "spaceships"}
+        with pytest.raises(GameInitError):
+            GameInitAction(initial).execute()
+
+    @staticmethod
+    def test_object_spec_not_a_dict_raises():
+        initial = {"id": "game-1", "objects": [42]}
+        with pytest.raises(GameInitError):
+            GameInitAction(initial).execute()
+
+    @staticmethod
+    def test_object_missing_type_raises():
+        initial = {"id": "game-1", "objects": [{"id": "obj-1"}]}
+        with pytest.raises(GameInitError):
+            GameInitAction(initial).execute()
+
+    @staticmethod
+    def test_field_not_a_dict_raises():
+        initial = {"id": "game-1", "field": "field_data", "objects": []}
+        with pytest.raises(GameInitError):
+            GameInitAction(initial).execute()
+
+    @staticmethod
+    def test_property_without_capability_dot_raises():
+        initial = {
+            "id": "game-1",
+            "objects": [{"id": "ship-1", "type": "spaceship", "properties": {"MovableLocation": {"x": 0, "y": 0}}}],
+        }
+        with pytest.raises(GameInitError):
+            GameInitAction(initial).execute()
+
+    @staticmethod
     def test_custom_object_factory():
         initial = {
             "id": "game-1",
