@@ -10,6 +10,10 @@ services:
   game_server:
     build: .
     command: python -m src.space_battle.game_server.app
+    depends_on:
+      - auth_service
+    environment:
+      SPACE_BATTLE_AUTH_SERVICE_URL: "http://auth_service:8002"
     ports:
       - "${SPACE_BATTLE_GAME_SERVICE_PORT}:${SPACE_BATTLE_GAME_SERVICE_PORT}"
     env_file:

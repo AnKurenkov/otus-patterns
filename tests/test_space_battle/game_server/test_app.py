@@ -5,6 +5,7 @@ from queue import Queue
 import jwt
 import pytest
 
+import src.space_battle.game_server.app as game_app_module
 from src.space_battle.config import settings
 from src.space_battle.core.actions.base import ActionBase
 from src.space_battle.core.actions.game_actions import GameAction, SchedulerAction
@@ -13,6 +14,7 @@ from src.space_battle.core.server.actions import UseSchedulerAction
 from src.space_battle.core.server.game_router import game_router
 from src.space_battle.core.server.server_thread import ServerThread
 from src.space_battle.game_server.app import app
+from src.space_battle.game_server.auth_client import AuthServiceError
 
 
 class TestGameServer:
@@ -163,4 +165,32 @@ class TestGameServer:
         }
         response = client.post("/api/message", json=msg, headers=headers)
         assert response.status_code == 404
+        assert response.json["status"] == "error"
+
+    @staticmethod
+    def test_create_game_registers_in_router(monkeypatch, client):
+        monkeypatch.setattr(game_app_module, "register_game", lambda participants: "game-http-1")
+        response = client.post("/api/game/create", json={"participants": ["user_1", "user_2"]})
+        assert response.status_code == 201
+        assert response.json["status"] == "created"
+        assert response.json["data"]["game_id"] == "game-http-1"
+
+        game = game_router.get("game-http-1")
+        assert game.id == "game-http-1"
+
+    @staticmethod
+    def test_create_game_auth_error_returns_502(monkeypatch, client):
+        def _fail(participants):
+            raise AuthServiceError("Auth Service is down.")
+
+        monkeypatch.setattr(game_app_module, "register_game", _fail)
+        response = client.post("/api/game/create", json={"participants": ["user_1"]})
+        assert response.status_code == 502
+        assert response.json["status"] == "error"
+        assert "Auth Service" in response.json["message"]
+
+    @staticmethod
+    def test_create_game_with_empty_body_returns_400(client):
+        response = client.post("/api/game/create", json={})
+        assert response.status_code == 400
         assert response.json["status"] == "error"

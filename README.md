@@ -211,7 +211,9 @@ PUT /api/notifications/{id}/read - Отметка как прочитанное
 | `SPACE_BATTLE_GAME_SERVICE_PORT` | Порт Game Service | `8001` |
 | `SPACE_BATTLE_AUTH_SERVICE_HOST` | Хост Auth Service | `0.0.0.0` |
 | `SPACE_BATTLE_AUTH_SERVICE_PORT` | Порт Auth Service | `8002` |
+| `SPACE_BATTLE_AUTH_SERVICE_URL` | URL Auth Service для исходящих вызовов Game Service | `http://localhost:8002` |
 | `SPACE_BATTLE_TOKEN_EXPIRATION_SECONDS` | Срок жизни JWT-токена, секунды | `3600` |
+| `SPACE_BATTLE_GAME_TICK_SECONDS` | Длительность тика игры, секунды | `0.05` |
 
 > **ВАЖНО:** в продакшене всегда задавайте свой `SPACE_BATTLE_SECRET_KEY`.
 

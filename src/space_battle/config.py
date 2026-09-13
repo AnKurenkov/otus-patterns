@@ -25,12 +25,18 @@ class Settings(BaseSettings):
     game_service_host: str = "0.0.0.0"
     game_service_port: int = 8001
 
-    # Auth Service
+    # Auth Service (для входящих соединений)
     auth_service_host: str = "0.0.0.0"
     auth_service_port: int = 8002
 
+    # Auth Service (для исходящих вызовов game_server → auth_service)
+    auth_service_url: str = "http://localhost:8002"
+
     # Срок жизни JWT-токена в секундах
     token_expiration_seconds: int = 3600
+
+    # Длительность тика игры в секундах
+    game_tick_seconds: float = 0.05
 
 
 # Модульный синглтон. Команды движка получают его через IoC-зависимость "Config"

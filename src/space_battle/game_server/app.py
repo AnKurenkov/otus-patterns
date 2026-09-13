@@ -10,10 +10,50 @@ from src.space_battle.core.scopes.init_action import InitAction
 from src.space_battle.core.scopes.init_app_scope_action import InitializeApplicationScopeAction
 from src.space_battle.core.server.game_router import game_router
 from src.space_battle.core.server.interpret_action import InterpretAction
-from src.space_battle.game_server.models import AgentMessageModel
+from src.space_battle.game_server.auth_client import AuthServiceError, register_game
+from src.space_battle.game_server.game_runtime import get_game_runtime
+from src.space_battle.game_server.models import AgentMessageModel, GameCreateModel
 from src.space_battle.models import ResponseModel, validate_pydantic
 
 app = Flask(__name__)
+
+
+@app.before_request
+def set_application_scope():
+    from src.space_battle.core.scopes.thread_scope_context import ThreadScopeContext
+
+    if ThreadScopeContext.get_current_scope() is None:
+        InitializeApplicationScopeAction().execute()
+
+
+@app.post("/api/game/create")
+@validate_pydantic(GameCreateModel)
+def create_game(request: GameCreateModel):
+    """
+    Endpoint для создания новой игры.
+    Тело запроса — JSON в формате GameCreateModel (список участников).
+    Игра регистрируется в Auth Service и в game_router.
+    """
+    try:
+        game_id = register_game(request.participants)
+    except AuthServiceError as e:
+        response = ResponseModel(
+            status="error",
+            message=str(e),
+            data={"created": False, "participants": request.participants},
+            request_id=str(uuid.uuid4()),
+        )
+        return jsonify(response.model_dump()), 502
+
+    get_game_runtime().create_game({"id": game_id})
+
+    response = ResponseModel(
+        status="created",
+        message="Game with 'game_id' created.",
+        data={"game_id": game_id, "participants": request.participants},
+        request_id=str(uuid.uuid4()),
+    )
+    return jsonify(response.model_dump()), 201
 
 
 def check_jwt_token(f):
@@ -108,4 +148,5 @@ def receive_message(request: AgentMessageModel):
 if __name__ == "__main__":
     InitAction().execute()
     InitializeApplicationScopeAction().execute()
+    get_game_runtime()
     app.run(host=settings.game_service_host, port=settings.game_service_port)
