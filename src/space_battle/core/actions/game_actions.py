@@ -6,8 +6,9 @@ from time import perf_counter
 from typing import Any
 
 from src.space_battle.core.actions.base import ActionBase
-from src.space_battle.core.base import GameObjectBase
+from src.space_battle.core.init.game_init_interpreter import GameInitInterpreter
 from src.space_battle.core.ioc import Ioc
+from src.space_battle.core.objects.game_object_base import GameObjectBase
 from src.space_battle.core.scopes.init_action import Scope
 
 logging.basicConfig(level=logging.DEBUG)
@@ -85,7 +86,7 @@ class GameInitAction(ActionBase):
 
     def execute(self):
         logger.debug("Выполнена команда GameInitAction.")
-        # TODO: описать обработку initial
+        GameInitInterpreter().interpret(self._initial)
 
 
 class GameStopAction(ActionBase):
