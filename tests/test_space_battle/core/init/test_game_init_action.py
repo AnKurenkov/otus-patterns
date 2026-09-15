@@ -109,6 +109,25 @@ class TestGameInitAction:
         assert isinstance(objects["bunker-1"], FuelBunker)
 
     @staticmethod
+    def test_owner_is_set_as_object_property():
+        initial = {
+            "id": "game-1",
+            "objects": [
+                {"id": "ship-1", "type": "spaceship", "owner": "user_1"},
+                {"id": "asteroid-1", "type": "asteroid"},
+            ],
+        }
+
+        GameInitAction(initial).execute()
+
+        objects = Ioc.resolve("Game.Objects", dict)
+        ship = objects["ship-1"]
+        asteroid = objects["asteroid-1"]
+        assert ship.get_property("owner") == "user_1"
+        with pytest.raises(KeyError):
+            asteroid.get_property("owner")
+
+    @staticmethod
     def test_unsupported_version_raises():
         initial = {"version": 2, "id": "game-1", "objects": []}
         with pytest.raises(GameInitError):

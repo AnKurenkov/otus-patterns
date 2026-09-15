@@ -112,7 +112,7 @@ class TestAuthService:
         headers = {"Authorization": f"Bearer {token}"}
 
         request = AgentMessageModel(
-            agent_id="agent_1",
+            agent_id="user_1",
             game_id=game_id,
             object_id="object_1",
             action_id="StubAction",

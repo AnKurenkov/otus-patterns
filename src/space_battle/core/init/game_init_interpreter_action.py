@@ -66,6 +66,9 @@ class GameInitInterpreterAction(ActionBase):
         self._apply_properties(obj, spec.get("properties", {}))
         objects = Ioc.resolve("Game.Objects", dict)
         objects[obj.id] = obj
+        owner = spec.get("owner")
+        if owner is not None:
+            obj.set_property("owner", owner)
 
     @staticmethod
     def _resolve_object(spec: dict) -> GameObjectBase:

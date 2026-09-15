@@ -41,6 +41,22 @@ class GameAction(ActionBase):
         Ioc.resolve("IoC.Scope.Current.Set", ActionBase, self._scope).execute()
         Ioc.resolve("IoC.Register", ActionBase, "Game.Queue", lambda: self._queue).execute()
         Ioc.resolve("IoC.Register", ActionBase, "Game.Objects", lambda: self._objects).execute()
+
+        def _has_access(agent_id: str, obj) -> bool:
+            if obj is None or agent_id is None:
+                return False
+            try:
+                owner = obj.get_property("owner")
+            except KeyError:
+                return False
+            return owner == agent_id
+
+        Ioc.resolve(
+            "IoC.Register",
+            ActionBase,
+            "Game.HasAccess",
+            lambda agent_id, obj: _has_access(agent_id, obj),
+        ).execute()
         Ioc.resolve("IoC.Register", ActionBase, "Game.IsOver", lambda: False).execute()
         # TODO: реализовать команды "Game.Init", "Game.Queue" (см. Урок 20, 1:10:00)
         #  что должно быть в макрокоманде "Game.Init": иниц. игрового поля - создать все игровые персонажи

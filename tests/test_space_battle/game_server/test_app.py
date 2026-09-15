@@ -1,5 +1,6 @@
 import threading
 import time
+import uuid
 from queue import Queue
 
 import jwt
@@ -9,6 +10,7 @@ import src.space_battle.game_server.app as game_app_module
 from src.space_battle.config import settings
 from src.space_battle.core.actions.base import ActionBase
 from src.space_battle.core.actions.game_actions import GameAction, SchedulerAction
+from src.space_battle.core.init.init_object_factories import RegisterGameObjectFactoriesInitAction
 from src.space_battle.core.ioc import Ioc
 from src.space_battle.core.server.actions import UseSchedulerAction
 from src.space_battle.core.server.game_router import game_router
@@ -50,6 +52,8 @@ class TestGameServer:
             lambda event: StubEventAction(event),
         ).execute()
 
+        RegisterGameObjectFactoriesInitAction().execute()
+
     @staticmethod
     @pytest.fixture()
     def server_thread_fixture():
@@ -80,7 +84,12 @@ class TestGameServer:
 
         Ioc.resolve("IoC.Register", ActionBase, "Game", lambda *args: GameAction(*args)).execute()
 
-        game = Ioc.resolve("Game", GameAction, 0.05, scheduler)
+        game_id = str(uuid.uuid4())
+        initial = {
+            "id": game_id,
+            "objects": [{"id": "object_1", "type": "spaceship", "owner": "agent_1"}],
+        }
+        game = Ioc.resolve("Game", GameAction, 0.05, scheduler, initial)
 
         game_router.register(game)
         server_thread.queue.put(game)
@@ -88,7 +97,7 @@ class TestGameServer:
         server_thread.run()
 
         token = jwt.encode(
-            {"game_id": game.id, "exp": int(time.time()) + 3600},
+            {"game_id": game.id, "sub": "agent_1", "exp": int(time.time()) + 3600},
             settings.secret_key,
             settings.algorithm,
         )
@@ -151,7 +160,7 @@ class TestGameServer:
     @staticmethod
     def test_missing_game_returns_processing_error_404(client):
         token = jwt.encode(
-            {"game_id": "unknown-game", "exp": int(time.time()) + 3600},
+            {"game_id": "unknown-game", "sub": "agent_1", "exp": int(time.time()) + 3600},
             settings.secret_key,
             settings.algorithm,
         )
@@ -166,6 +175,26 @@ class TestGameServer:
         response = client.post("/api/message", json=msg, headers=headers)
         assert response.status_code == 404
         assert response.json["status"] == "error"
+
+    @staticmethod
+    def test_agent_id_not_matching_token_sub_returns_403(client):
+        token = jwt.encode(
+            {"game_id": "game-1", "sub": "agent_1", "exp": int(time.time()) + 3600},
+            settings.secret_key,
+            settings.algorithm,
+        )
+        headers = {"Authorization": f"Bearer {token}"}
+        msg = {
+            "agent_id": "agent_2",
+            "game_id": "game-1",
+            "object_id": "object_1",
+            "action_id": "StubAction",
+            "data": {},
+        }
+        response = client.post("/api/message", json=msg, headers=headers)
+        assert response.status_code == 403
+        assert response.json["status"] == "error"
+        assert response.json["message"] == "Agent ID does not match token subject."
 
     @staticmethod
     def test_create_game_registers_in_router(monkeypatch, client):

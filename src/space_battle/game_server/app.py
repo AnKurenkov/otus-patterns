@@ -103,6 +103,15 @@ def check_jwt_token(f):
             )
             return jsonify(response.model_dump()), 403
 
+        agent_id_from_request = request_.json.get("agent_id")
+        if decoded_token.get("sub") != agent_id_from_request:
+            response = ResponseModel(
+                status="error",
+                message="Agent ID does not match token subject.",
+                request_id=str(uuid.uuid4()),
+            )
+            return jsonify(response.model_dump()), 403
+
         g.decoded_token = decoded_token
         return f(*args, **kwargs)
 
@@ -118,7 +127,7 @@ def receive_message(request: AgentMessageModel):
     Тело запроса — JSON в формате AgentMessageModel.
     """
     try:
-        cmd = InterpretAction(request)  # TODO: Брать из IoC
+        cmd = InterpretAction(request, agent_id=g.decoded_token["sub"])
         game = game_router.get(request.game_id)
         game.queue.put(cmd)
     except Exception as e:
