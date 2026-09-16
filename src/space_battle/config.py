@@ -35,6 +35,9 @@ class Settings(BaseSettings):
     # Срок жизни JWT-токена в секундах
     token_expiration_seconds: int = 3600
 
+    # Бэкенд хранилища игр Auth Service (in_memory | ...)
+    storage_backend: str = "in_memory"
+
     # Длительность тика игры в секундах
     game_tick_seconds: float = 0.05
 

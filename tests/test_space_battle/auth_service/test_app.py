@@ -5,8 +5,8 @@ import jwt
 import pytest
 
 from src.space_battle.auth_service.app import app as auth_app
-from src.space_battle.auth_service.app import games_db
 from src.space_battle.auth_service.models import GameRequestModel, TokenRequestModel
+from src.space_battle.auth_service.storage import create_game_repository
 from src.space_battle.core.actions.base import ActionBase
 from src.space_battle.core.actions.game_actions import GameAction, SchedulerAction
 from src.space_battle.core.ioc import Ioc
@@ -21,9 +21,10 @@ class TestAuthService:
     @staticmethod
     @pytest.fixture(autouse=True)
     def clean_db():
-        games_db.clear()
+        repository = create_game_repository()
+        repository.clear()
         yield
-        games_db.clear()
+        repository.clear()
 
     @staticmethod
     @pytest.fixture
