@@ -6,7 +6,7 @@ from queue import Queue
 import jwt
 import pytest
 
-import src.space_battle.game_server.app as game_app_module
+import src.space_battle.game_server.routes as game_routes_module
 from src.space_battle.config import settings
 from src.space_battle.core.actions.base import ActionBase
 from src.space_battle.core.actions.game_actions import GameAction, SchedulerAction
@@ -198,7 +198,7 @@ class TestGameServer:
 
     @staticmethod
     def test_create_game_registers_in_router(monkeypatch, client):
-        monkeypatch.setattr(game_app_module, "register_game", lambda participants: "game-http-1")
+        monkeypatch.setattr(game_routes_module, "register_game", lambda participants: "game-http-1")
         response = client.post("/api/game/create", json={"participants": ["user_1", "user_2"]})
         assert response.status_code == 201
         assert response.json["status"] == "created"
@@ -212,7 +212,7 @@ class TestGameServer:
         def _fail(participants):
             raise AuthServiceError("Auth Service is down.")
 
-        monkeypatch.setattr(game_app_module, "register_game", _fail)
+        monkeypatch.setattr(game_routes_module, "register_game", _fail)
         response = client.post("/api/game/create", json={"participants": ["user_1"]})
         assert response.status_code == 502
         assert response.json["status"] == "error"
