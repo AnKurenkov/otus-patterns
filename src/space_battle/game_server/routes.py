@@ -30,7 +30,7 @@ def set_application_scope():
 def create_game(request: GameCreateModel):
     """
     Endpoint для создания новой игры.
-    Тело запроса — JSON в формате GameCreateModel (список участников).
+    Тело запроса — JSON в формате GameCreateModel (список участников и конфиг поля).
     Игра регистрируется в Auth Service и в game_router.
     """
     try:
@@ -44,7 +44,7 @@ def create_game(request: GameCreateModel):
         )
         return jsonify(response.model_dump()), 502
 
-    get_game_runtime().create_game({"id": game_id})
+    get_game_runtime().create_game({"id": game_id, **(request.config or {})})
 
     response = ResponseModel(
         status="created",

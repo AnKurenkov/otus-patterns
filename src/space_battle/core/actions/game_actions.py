@@ -35,6 +35,7 @@ class GameAction(ActionBase):
             initial.get("id", str(uuid.uuid4())) if initial else str(uuid.uuid4())
         )  # TODO: определять в initial
         self._objects: dict[str, GameObjectBase] = {}  # TODO: определять в initial
+        self._field: dict | None = None
         self._time = time_sec
         self._scheduler = scheduler
         self._lock = threading.RLock()
@@ -67,6 +68,13 @@ class GameAction(ActionBase):
         Ioc.resolve("IoC.Register", ActionBase, "Game.Init", lambda init: GameInitAction(init)).execute()
         # self._queue.put(Ioc.resolve("Game.Init", ActionBase, initial))
         Ioc.resolve("Game.Init", ActionBase, initial).execute()
+        if initial and isinstance(initial.get("field"), dict):
+            self._field = initial["field"]
+
+    @property
+    def field(self) -> dict | None:
+        """Конфигурация игрового поля"""
+        return self._field
 
     def execute(self):
         with self._lock:
@@ -84,6 +92,14 @@ class GameAction(ActionBase):
     @property
     def id(self):
         return self._uuid
+
+    @property
+    def objects(self):
+        return self._objects
+
+    @property
+    def lock(self):
+        return self._lock
 
     @property
     def queue(self):
