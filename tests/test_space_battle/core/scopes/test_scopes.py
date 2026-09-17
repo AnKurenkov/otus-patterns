@@ -64,6 +64,74 @@ class TestScopes:
         thread2.join()
 
     @staticmethod
+    def test_concurrent_register_and_resolve_in_shared_scope():
+        scope = Ioc.resolve("IoC.Scope.Create", Any)
+        Ioc.resolve("IoC.Scope.Current.Set", ActionBase, scope).execute()
+
+        errors = []
+
+        def worker(worker_id: int):
+            try:
+                Ioc.resolve("IoC.Scope.Current.Set", ActionBase, scope).execute()
+                for j in range(200):
+                    dep_name = f"dep_{worker_id}_{j}"
+                    Ioc.resolve("IoC.Register", ActionBase, dep_name, lambda v=worker_id: v).execute()
+                    assert Ioc.resolve(dep_name, int) == worker_id
+            except Exception as e:
+                errors.append(e)
+
+        threads = [threading.Thread(target=worker, args=(i,)) for i in range(4)]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+
+        assert errors == []
+        assert all(Ioc.resolve(f"dep_{i}_{j}", int) == i for i in range(4) for j in range(200))
+
+    @staticmethod
+    def test_concurrent_writes_to_same_dependency_do_not_corrupt_scope():
+        scope = Ioc.resolve("IoC.Scope.Create", Any)
+        Ioc.resolve("IoC.Scope.Current.Set", ActionBase, scope).execute()
+
+        valid_values = (0, 1, 2, 3)
+        errors = []
+
+        def worker(worker_id: int):
+            try:
+                Ioc.resolve("IoC.Scope.Current.Set", ActionBase, scope).execute()
+                for _ in range(500):
+                    Ioc.resolve("IoC.Register", ActionBase, "contended", lambda v=worker_id: v).execute()
+                    assert Ioc.resolve("contended", int) in valid_values
+            except Exception as e:
+                errors.append(e)
+
+        threads = [threading.Thread(target=worker, args=(i,)) for i in valid_values]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+
+        assert errors == []
+
+    @staticmethod
+    def test_scope_has_lock_and_scope_lock_helper():
+        from src.space_battle.core.scopes.locking import scope_lock
+
+        scope = Ioc.resolve("IoC.Scope.Create", Any)
+
+        scope_lock_object = scope["IoC.Scope.Lock"]
+        assert hasattr(scope_lock_object, "acquire") and hasattr(scope_lock_object, "release")
+        assert scope_lock(scope) is scope_lock_object
+
+        root_scope = Ioc.get_root_scope()
+        root_lock = root_scope["IoC.Scope.Lock"]
+        assert hasattr(root_lock, "acquire") and hasattr(root_lock, "release")
+        assert scope_lock(root_scope) is root_lock
+
+        assert scope_lock({}) is not None
+
+    @staticmethod
     def test_get_root_scope_item():
         item = InitAction.get_root_scope_item("IoC.Register")
 

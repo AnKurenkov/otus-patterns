@@ -35,6 +35,7 @@ class InitAction(ActionBase):
         else:
             parent_scope = Ioc.resolve("IoC.Scope.Current", Any)
         created_scope["IoC.Scope.Parent"] = lambda *args_: parent_scope
+        created_scope["IoC.Scope.Lock"] = threading.RLock()
         return created_scope
 
     @classmethod
@@ -86,6 +87,9 @@ class InitAction(ActionBase):
         )
 
         InitAction.set_root_scope_item("IoC.Scope.Debug.CurrentInfo", lambda: InitAction._debug_current_info())
+
+        with InitAction._lock:
+            InitAction._get_root_scope()["IoC.Scope.Lock"] = threading.RLock()
 
         Ioc.resolve(
             "Update Ioc Resolve Dependency Strategy",

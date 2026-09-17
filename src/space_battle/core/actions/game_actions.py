@@ -1,4 +1,5 @@
 import logging
+import threading
 import uuid
 from abc import ABC, abstractmethod
 from queue import Queue
@@ -36,6 +37,7 @@ class GameAction(ActionBase):
         self._objects: dict[str, GameObjectBase] = {}  # TODO: определять в initial
         self._time = time_sec
         self._scheduler = scheduler
+        self._lock = threading.RLock()
         self._queue = Queue()  # TODO: Ioc.resolve("Game.Queue.NonThreadSafe.Create", ActionsQueueBase)?
         self._scope: Scope = Ioc.resolve("IoC.Scope.Create", Any)
         Ioc.resolve("IoC.Scope.Current.Set", ActionBase, self._scope).execute()
@@ -67,16 +69,17 @@ class GameAction(ActionBase):
         Ioc.resolve("Game.Init", ActionBase, initial).execute()
 
     def execute(self):
-        Ioc.resolve("IoC.Scope.Current.Set", ActionBase, self._scope).execute()
+        with self._lock:
+            Ioc.resolve("IoC.Scope.Current.Set", ActionBase, self._scope).execute()
 
-        current_time = perf_counter()
-        while not Ioc.resolve("Game.IsOver", bool) and (current_time + self._time > perf_counter()):
-            if not self._queue.empty():
-                action = self._queue.get(block=False)
-                action.execute()
+            current_time = perf_counter()
+            while not Ioc.resolve("Game.IsOver", bool) and (current_time + self._time > perf_counter()):
+                if not self._queue.empty():
+                    action = self._queue.get(block=False)
+                    action.execute()
 
-        if not Ioc.resolve("Game.IsOver", bool):
-            self._scheduler.add(self)
+            if not Ioc.resolve("Game.IsOver", bool):
+                self._scheduler.add(self)
 
     @property
     def id(self):
@@ -91,10 +94,12 @@ class GameAction(ActionBase):
         return self._scope
 
     def register_object(self, obj: GameObjectBase):
-        self._objects[obj.id] = obj
+        with self._lock:
+            self._objects[obj.id] = obj
 
     def get_object(self, obj_id: str) -> GameObjectBase | None:
-        return self._objects.get(obj_id, None)
+        with self._lock:
+            return self._objects.get(obj_id, None)
 
 
 class GameInitAction(ActionBase):

@@ -12,6 +12,7 @@ from src.space_battle.core.actions.base import ActionBase
 from src.space_battle.core.actions.game_actions import GameAction, SchedulerAction
 from src.space_battle.core.init.init_object_factories import RegisterGameObjectFactoriesInitAction
 from src.space_battle.core.ioc import Ioc
+from src.space_battle.core.objects.game_object_base import GameObjectBase
 from src.space_battle.core.server.actions import UseSchedulerAction
 from src.space_battle.core.server.game_router import game_router
 from src.space_battle.core.server.server_thread import ServerThread
@@ -223,3 +224,52 @@ class TestGameServer:
         response = client.post("/api/game/create", json={})
         assert response.status_code == 400
         assert response.json["status"] == "error"
+
+    @staticmethod
+    def test_concurrent_register_object_keeps_all_objects():
+        scheduler = SchedulerAction()
+        game = GameAction(0.05, scheduler)
+
+        errors = []
+
+        def worker(worker_id: int):
+            try:
+                for j in range(50):
+                    obj = GameObjectBase(f"obj_{worker_id}_{j}", "test")
+                    game.register_object(obj)
+            except Exception as e:
+                errors.append(e)
+
+        threads = [threading.Thread(target=worker, args=(i,)) for i in range(4)]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+
+        assert errors == []
+        assert len(game._objects) == 200
+        assert game.get_object("obj_3_49") is not None
+        assert game.get_object("missing") is None
+
+    @staticmethod
+    def test_concurrent_execute_processes_each_command_once():
+        class CounterAction(ActionBase):
+            def __init__(self, counter):
+                self._counter = counter
+
+            def execute(self):
+                self._counter[0] += 1
+
+        scheduler = SchedulerAction()
+        game = GameAction(0.1, scheduler)
+        counter = [0]
+        for _ in range(30):
+            game.queue.put(CounterAction(counter))
+
+        threads = [threading.Thread(target=game.execute) for _ in range(2)]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+
+        assert counter[0] == 30
