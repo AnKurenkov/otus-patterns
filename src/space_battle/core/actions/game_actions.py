@@ -2,7 +2,7 @@ import logging
 import threading
 import uuid
 from abc import ABC, abstractmethod
-from queue import Queue
+from queue import Empty, Queue
 from time import perf_counter
 from typing import Any
 
@@ -80,11 +80,16 @@ class GameAction(ActionBase):
         with self._lock:
             Ioc.resolve("IoC.Scope.Current.Set", ActionBase, self._scope).execute()
 
-            current_time = perf_counter()
-            while not Ioc.resolve("Game.IsOver", bool) and (current_time + self._time > perf_counter()):
-                if not self._queue.empty():
-                    action = self._queue.get(block=False)
-                    action.execute()
+            deadline = perf_counter() + self._time
+            while not Ioc.resolve("Game.IsOver", bool):
+                remaining = deadline - perf_counter()
+                if remaining <= 0:
+                    break
+                try:
+                    action = self._queue.get(timeout=remaining)
+                except Empty:
+                    break
+                action.execute()
 
             if not Ioc.resolve("Game.IsOver", bool):
                 self._scheduler.add(self)
