@@ -9,12 +9,9 @@ T = TypeVar("T")
 
 
 def _assert_capability(obj: Any, interface_name: str):
-    """Проверить наличие способности у объекта (T2-guard на доступе).
-
-    Объекты без атрибута `capabilities` считаются способными (обратная совместимость).
-    """
+    """Проверить наличие способности у объекта (Capability Guard on access)."""
     capabilities = getattr(obj, "capabilities", None)
-    if capabilities is not None and interface_name not in capabilities:
+    if interface_name not in capabilities:
         raise ObjectCapabilityError(
             f"Объект {obj} потерял способность '{interface_name}'. Текущие способности: {capabilities}"
         )
