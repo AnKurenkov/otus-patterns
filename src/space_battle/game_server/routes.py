@@ -11,8 +11,9 @@ from src.space_battle.core.server.game_router import game_router
 from src.space_battle.core.server.interpret_action import InterpretAction
 from src.space_battle.game_server.auth_client import AuthServiceError, register_game
 from src.space_battle.game_server.game_runtime import get_game_runtime
-from src.space_battle.game_server.models import AgentMessageModel, GameCreateModel
+from src.space_battle.game_server.models import AgentMessageModel, GameCreateModel, GameStateRequestModel
 from src.space_battle.models import ResponseModel, validate_pydantic
+from src.space_battle.utils.game_state_reporter import game_state_dict
 
 router = Blueprint("game", __name__)
 
@@ -151,3 +152,31 @@ def receive_message(request: AgentMessageModel):
         request_id=str(uuid.uuid4()),
     )
     return jsonify(response.model_dump()), 202
+
+
+@router.route("/api/game/state", methods=["POST"])
+@check_jwt_token
+@validate_pydantic(GameStateRequestModel)
+def get_game_state(request: GameStateRequestModel):
+    """
+    Debug-endpoint: отдаёт текущее состояние игры (поле и объекты) в виде JSON.
+    Требует действительный JWT участника этой игры.
+    """
+    try:
+        game = game_router.get(request.game_id)
+    except KeyError as e:
+        response = ResponseModel(
+            status="error",
+            message=f"Processing error: {str(e)}",
+            data={},
+            request_id=str(uuid.uuid4()),
+        )
+        return jsonify(response.model_dump()), 404
+
+    response = ResponseModel(
+        status="ok",
+        message="",
+        data=game_state_dict(game),
+        request_id=str(uuid.uuid4()),
+    )
+    return jsonify(response.model_dump()), 200

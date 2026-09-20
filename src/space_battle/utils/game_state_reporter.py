@@ -71,6 +71,15 @@ def format_game_state(game: GameAction) -> str:
     return "\n".join(lines)
 
 
+def game_state_dict(game: GameAction) -> dict:
+    """Сформировать словарь с текущим состоянием игры для отладочного endpoint."""
+    return {
+        "id": game.id,
+        "field": game.field,
+        "objects": [_read_properties(obj) for obj in game.objects.values()],
+    }
+
+
 def report_game_state(game: GameAction, out: Optional[Union[str, Path, TextIO]] = None) -> str:
     """Вывести состояние игры в консоль и, при необходимости, дописать в файл."""
     text = format_game_state(game)

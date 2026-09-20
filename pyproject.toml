@@ -32,6 +32,7 @@ remove-unused-variables = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = ["--import-mode=importlib"]
+markers = ["docker: E2E-тесты с реальным запуском сервисов в Docker"]
 
 [tool.coverage.run]
 source = ["src"]

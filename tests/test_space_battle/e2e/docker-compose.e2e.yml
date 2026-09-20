@@ -1,0 +1,18 @@
+# Override docker-compose.yml для Docker E2E-тестов.
+# Поднимает оба сервиса на отдельном порту (по умолчанию 18001/18002),
+# чтобы не конфликтовать с локально запущенными dev-сервисами (8001/8002).
+# Порт контейнера задаётся теми же переменными, что и хост-прокидывание,
+# поэтому внутри контейнера приложение слушает искомый тестовый порт.
+services:
+  auth_service:
+    environment:
+      SPACE_BATTLE_AUTH_SERVICE_PORT: "${SPACE_BATTLE_AUTH_SERVICE_TEST_PORT:-18002}"
+    ports:
+      - "${SPACE_BATTLE_AUTH_SERVICE_TEST_PORT:-18002}:${SPACE_BATTLE_AUTH_SERVICE_TEST_PORT:-18002}"
+
+  game_server:
+    environment:
+      SPACE_BATTLE_GAME_SERVICE_PORT: "${SPACE_BATTLE_GAME_SERVICE_TEST_PORT:-18001}"
+      SPACE_BATTLE_AUTH_SERVICE_URL: "http://auth_service:${SPACE_BATTLE_AUTH_SERVICE_TEST_PORT:-18002}"
+    ports:
+      - "${SPACE_BATTLE_GAME_SERVICE_TEST_PORT:-18001}:${SPACE_BATTLE_GAME_SERVICE_TEST_PORT:-18001}"
