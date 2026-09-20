@@ -229,6 +229,7 @@ def _wait_for(predicate, timeout: int):
     raise AssertionError(f"Условие не выполнилось за {timeout} с: {last_error}")
 
 
+@pytest.mark.docker
 def test_docker_e2e_game_creation_movement_and_debug_report(docker_services):
     """E2E в Docker: создание игры (реальный вызов auth_service), JWT, движение, отладочный вывод."""
     auth_url = docker_services["auth"]
