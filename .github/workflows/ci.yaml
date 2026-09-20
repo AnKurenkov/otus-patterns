@@ -37,3 +37,10 @@ jobs:
       with:
         name: coverage-report
         path: htmlcov/
+
+    - name: Upload E2E game state log
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: e2e-game-state-log
+        path: temp/e2e_game_state.log
