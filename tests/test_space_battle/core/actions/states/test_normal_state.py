@@ -80,3 +80,38 @@ class TestNormalState:
         next_state = state.handle(actions_loop)
 
         assert isinstance(next_state, MoveToState)
+
+    @staticmethod
+    def test_raising_command_is_routed_to_exception_handler():
+        class RaisesAction(ActionBase):
+            def execute(self):
+                raise RuntimeError("boom")
+
+        handled = []
+
+        class HandleExceptionStub(ActionBase):
+            def __init__(self, action, exception):
+                self._action = action
+                self._exception = exception
+                handled.append((self._action, self._exception))
+
+            def execute(self):
+                pass
+
+        Ioc.resolve(
+            "IoC.Register",
+            ActionBase,
+            "HandleException",
+            lambda action, exception: HandleExceptionStub(action, exception),
+        ).execute()
+
+        q: Queue = Queue()
+        q.put(RaisesAction())
+        state = NormalState()
+        actions_loop = _StubActionsLoop(q)
+
+        next_state = state.handle(actions_loop)
+
+        assert next_state is state
+        assert len(handled) == 1
+        assert isinstance(handled[0][0], RaisesAction)

@@ -63,6 +63,22 @@ class TestStateActionsLoopBehaviour:
             actions_loop.stop()
 
     @staticmethod
+    def test_none_initial_state_stops_loop():
+        class _StubLoop:
+            def __init__(self):
+                self.stopped = False
+
+            def stop(self):
+                self.stopped = True
+
+        loop = _StubLoop()
+        behaviour = StateActionsLoopBehaviour(loop, None)
+
+        behaviour()
+
+        assert loop.stopped
+
+    @staticmethod
     def test_move_to_command_switches_thread_to_move_to_state(actions_loop_fixture):
         q: Queue = Queue()
         target_queue: Queue = Queue()

@@ -13,13 +13,13 @@ logger = logging.getLogger(__name__)
 class ServerThread(ActionsLoopBase):
     """Серверный поток обработки Игр и внешних действий (команд) Агентов"""
 
-    def __init__(self, queue: ActionsQueueBase | Queue):
+    def __init__(self, queue: ActionsQueueBase | Queue, daemon: bool = False):
         self._running = False
         self._queue = queue
         self._behaviour = self._default_behaviour
         self._before = self._default_before
         self._after = self._default_after
-        self._thread = threading.Thread(target=self._loop)
+        self._thread = threading.Thread(target=self._loop, daemon=daemon)
 
     def _loop(self):
         self._before()

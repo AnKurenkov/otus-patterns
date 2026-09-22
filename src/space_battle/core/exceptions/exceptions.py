@@ -27,3 +27,7 @@ class ObjectRotateError(SpaceBattleError):
 
 class NotEnoughFuelError(SpaceBattleError):
     """Ошибка наличия топлива у объекта."""
+
+
+class ObjectCapabilityError(SpaceBattleError):
+    """Ошибка отсутствия/потери способности объекта (например, Movable)."""

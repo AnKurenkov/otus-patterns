@@ -4,12 +4,12 @@ from unittest.mock import PropertyMock, patch
 import pytest
 
 from src.space_battle.core.actions.actions import Move
-from src.space_battle.core.base import Movable
 from src.space_battle.core.exceptions import (
     GetLocationError,
     GetVelocityError,
     ObjectMoveError,
 )
+from src.space_battle.core.objects.capabilities.movable import Movable
 from src.space_battle.core.space import Point, PolarVelocity
 from tests.test_space_battle.core import MovableStub
 

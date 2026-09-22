@@ -2,9 +2,19 @@ from abc import ABC
 from typing import Any, Protocol, Type, TypeVar, get_type_hints
 
 from src.space_battle.core.actions.base import ActionBase
+from src.space_battle.core.exceptions.exceptions import ObjectCapabilityError
 from src.space_battle.core.ioc import Ioc
 
 T = TypeVar("T")
+
+
+def _assert_capability(obj: Any, interface_name: str):
+    """Проверить наличие способности у объекта (Capability Guard on access)."""
+    capabilities = getattr(obj, "capabilities", None)
+    if interface_name not in capabilities:
+        raise ObjectCapabilityError(
+            f"Объект {obj} потерял способность '{interface_name}'. Текущие способности: {capabilities}"
+        )
 
 
 # ===== Интерфейс фабрики адаптеров =====
@@ -92,15 +102,17 @@ class DynamicAdapterFactory:
 
             def make_getter(prop_name_, prop_type_, interface_name_):
                 def getter(self):
+                    _assert_capability(self._obj, interface_name_)
                     dependency = f"{interface_name_}.{prop_name_}.Get"
-                    return Ioc.resolve(dependency, prop_type_, self)
+                    return Ioc.resolve(dependency, prop_type_, self._obj)
 
                 return getter
 
             def make_setter(prop_name_, interface_name_):
                 def setter(self, value):
+                    _assert_capability(self._obj, interface_name_)
                     dependency = f"{interface_name_}.{prop_name_}.Set"
-                    Ioc.resolve(dependency, ActionBase, self, value).execute()
+                    Ioc.resolve(dependency, ActionBase, self._obj, value).execute()
 
                 return setter
 

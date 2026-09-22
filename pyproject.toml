@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Задания по курсу OTUS 'Архитектура и шаблоны проектирования'"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = ["pydantic-settings==2.12.0"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -28,3 +28,19 @@ in-place=true
 ignore-init-module-imports=true
 remove-all-unused-imports = true
 remove-unused-variables = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["--import-mode=importlib", "-m", "not docker"]
+markers = ["docker: E2E-тесты с реальным запуском сервисов в Docker"]
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["tests/*", "*/__pycache__/*"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 80
+
+[tool.coverage.html]
+directory = "htmlcov"

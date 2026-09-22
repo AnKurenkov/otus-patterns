@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Optional
 
+from .locking import scope_lock
+
 
 class DependencyResolverBase(ABC):
     @abstractmethod
@@ -15,8 +17,13 @@ class DependencyResolver(DependencyResolverBase):
         dependencies = self._dependencies
 
         while True:
-            dependency_resolver_strategy: Optional[Callable[[list[Any]], Any]] = dependencies.get(dependency, None)
-            if dependency_resolver_strategy:
+            with scope_lock(dependencies):
+                dependency_resolver_strategy: Optional[Callable[[list[Any]], Any]] = dependencies.get(dependency, None)
+                parent_resolver_strategy = None
+                if dependency_resolver_strategy is None:
+                    parent_resolver_strategy = dependencies["IoC.Scope.Parent"]
+
+            if dependency_resolver_strategy is not None:
                 return dependency_resolver_strategy(*args)
             else:
-                dependencies = dict[str, Callable[[list[Any]], Any]](dependencies["IoC.Scope.Parent"](*args))
+                dependencies = dict[str, Callable[[list[Any]], Any]](parent_resolver_strategy(*args))
